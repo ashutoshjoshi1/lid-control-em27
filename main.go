@@ -32,11 +32,11 @@ type LidApp struct {
 	rainLbl      *walk.Label
 	powerFailLbl *walk.Label
 
-	cycleMinEdit  *walk.NumberEdit
-	cycleBtn      *walk.PushButton
-	cycleStateLbl *walk.Label
-	cycleNextLbl  *walk.Label
-	cycleTimeLbl  *walk.Label
+	loopChk      *walk.CheckBox
+	loopMinEdit  *walk.NumberEdit
+	loopStateLbl *walk.Label
+	loopNextLbl  *walk.Label
+	loopTimeLbl  *walk.Label
 
 	driver    MotorDriver
 	pollStop  chan struct{}
@@ -46,14 +46,15 @@ type LidApp struct {
 	closePos int32
 	posKnown bool
 
-	// Cycle state. Touched only on the UI thread except where noted.
-	cycleStop    chan struct{} // closed to stop the cycle goroutine
-	cycleReset   chan int      // buffered; carries the op a manual press just ran
-	cycleRunning bool
-	cycleGen     int    // bumped per start, so a dying loop can't touch its successor
+	// Loop state. Touched only on the UI thread except where noted.
+	loopStop     chan struct{} // closed to stop the loop goroutine
+	loopReset    chan int      // buffered; carries the op a manual press just ran
+	loopRunning  bool
+	loopGen      int    // bumped per start, so a dying loop can't touch its successor
+	loopSuppress bool   // guards SetChecked against re-entering onLoopToggle
 	posState     string // last classified position: "Open"/"Closed"/"Moving"/""
 
-	// cmdMu serialises RunOperation between the UI thread and the cycle
+	// cmdMu serialises RunOperation between the UI thread and the loop
 	// goroutine. sendQuery is mutex-guarded per frame, but RunOperation is a
 	// multi-frame sequence (READY poll → select+START → reset) that must not
 	// interleave with another one.
@@ -139,42 +140,48 @@ func (a *LidApp) run() error {
 				},
 			},
 
-			// ── Cycle ────────────────────────────────────────────────────
+			// ── Loop ─────────────────────────────────────────────────────
 			GroupBox{
-				Title:  "Cycle",
+				Title:  "Loop",
 				Layout: Grid{Columns: 2, Spacing: 8},
 				Children: []Widget{
 
-					Label{Text: "Interval (min):"},
-					NumberEdit{
-						AssignTo:           &a.cycleMinEdit,
-						Decimals:           0,
-						MinValue:           1,
-						MaxValue:           120,
-						Value:              defaultCycleMinutes,
-						SpinButtonsVisible: true,
-						Enabled:            false,
+					CheckBox{
+						AssignTo:         &a.loopChk,
+						Text:             "Loop",
+						Enabled:          false,
+						OnCheckedChanged: a.onLoopToggle,
+					},
+					Composite{
+						Layout: HBox{MarginsZero: true, Spacing: 6},
+						Children: []Widget{
+							Label{Text: "Wait (min):"},
+							NumberEdit{
+								AssignTo:           &a.loopMinEdit,
+								Decimals:           0,
+								MinValue:           1,
+								MaxValue:           120,
+								Value:              defaultLoopMinutes,
+								SpinButtonsVisible: true,
+								Enabled:            false,
+							},
+						},
 					},
 
-					PushButton{
-						AssignTo:  &a.cycleBtn,
-						Text:      "Start",
-						Enabled:   false,
-						OnClicked: a.onCycleToggle,
+					Label{
+						AssignTo: &a.loopStateLbl,
+						Text:     loopIdleText,
 					},
 					Label{
-						AssignTo: &a.cycleStateLbl,
-						Text:     cycleIdleText,
+						AssignTo: &a.loopNextLbl,
+						Text:     loopNextIdleText,
 					},
 
 					Label{
-						AssignTo: &a.cycleNextLbl,
-						Text:     cycleNextIdleText,
+						AssignTo: &a.loopTimeLbl,
+						Text:     loopTimeIdleText,
 					},
-					Label{
-						AssignTo: &a.cycleTimeLbl,
-						Text:     cycleTimeIdleText,
-					},
+					Label{},
 				},
 			},
 
@@ -238,7 +245,7 @@ func (a *LidApp) run() error {
 func (a *LidApp) onConnect() {
 	if a.connected {
 		// ── Disconnect ───────────────────────────────────────────────────
-		a.stopCycle()
+		a.stopLoop()
 		a.stopAlarmPoller()
 
 		if err := a.driver.Close(); err != nil {
@@ -257,8 +264,8 @@ func (a *LidApp) onConnect() {
 		a.openBtn.SetEnabled(false)
 		a.closeBtn.SetEnabled(false)
 		a.resetAlarmBtn.SetEnabled(false)
-		a.cycleBtn.SetEnabled(false)
-		a.cycleMinEdit.SetEnabled(false)
+		a.loopChk.SetEnabled(false)
+		a.loopMinEdit.SetEnabled(false)
 
 	} else {
 		// ── Connect ──────────────────────────────────────────────────────
@@ -276,8 +283,8 @@ func (a *LidApp) onConnect() {
 		a.openBtn.SetEnabled(true)
 		a.closeBtn.SetEnabled(true)
 		a.resetAlarmBtn.SetEnabled(true)
-		a.cycleBtn.SetEnabled(true)
-		a.cycleMinEdit.SetEnabled(true)
+		a.loopChk.SetEnabled(true)
+		a.loopMinEdit.SetEnabled(true)
 
 		// Read stored target positions for Open (op 2) and Close (op 3).
 		// If this fails the position display will remain "—" but the app works normally.
@@ -298,7 +305,7 @@ func (a *LidApp) onClose() { a.runManual(OpLidClose, "Close Error") }
 
 // runManual issues a lid command off the UI thread so the window stays
 // responsive while RunOperation waits for READY (up to ~2 s), and while it
-// waits on cmdMu for an in-flight cycle move. If the cycle is running, a
+// waits on cmdMu for an in-flight loop move. If the loop is running, a
 // successful manual move restarts its countdown.
 func (a *LidApp) runManual(op int, title string) {
 	a.openBtn.SetEnabled(false)
@@ -318,9 +325,9 @@ func (a *LidApp) runManual(op int, title string) {
 				return
 			}
 
-			if a.cycleRunning {
+			if a.loopRunning {
 				select {
-				case a.cycleReset <- op:
+				case a.loopReset <- op:
 				default: // loop already exiting — nothing to reschedule
 				}
 			}
@@ -348,19 +355,19 @@ func (a *LidApp) onResetAlarm() {
 	}()
 }
 
-// ── Cycle ────────────────────────────────────────────────────────────────────
+// ── Loop ─────────────────────────────────────────────────────────────────────
 
 const (
 	// Must be float64: NumberEdit's Value property asserts float64 and
 	// silently falls back to 0 (which is out of range) for any other type.
-	defaultCycleMinutes float64 = 5
+	defaultLoopMinutes float64 = 5
 
-	cycleTickInterval = 250 * time.Millisecond
+	loopTickInterval = 250 * time.Millisecond
 
-	cycleIdleText     = "○  Idle"
-	cycleRunningText  = "●  Running"
-	cycleNextIdleText = "Next:  ---"
-	cycleTimeIdleText = "--:--"
+	loopIdleText     = "○  Idle"
+	loopRunningText  = "●  Running"
+	loopNextIdleText = "Next:  ---"
+	loopTimeIdleText = "--:--"
 )
 
 // oppositeOp returns the lid operation that reverses op.
@@ -379,23 +386,38 @@ func opLabel(op int) string {
 	return "▼  Close"
 }
 
-// onCycleToggle handles the Start/Stop button.
-func (a *LidApp) onCycleToggle() {
-	if a.cycleRunning {
-		a.stopCycle()
+// onLoopToggle handles the Loop checkbox. Programmatic SetChecked also raises
+// CheckedChanged, so every internal change goes through setLoopChecked, which
+// sets loopSuppress to keep this handler from re-entering start/stop.
+func (a *LidApp) onLoopToggle() {
+	// loopMinEdit is built after the checkbox, so ignore anything raised while
+	// the window is still being constructed — start/stop would deref it as nil.
+	if a.loopSuppress || a.loopMinEdit == nil {
+		return
+	}
+	if a.loopChk.Checked() {
+		a.startLoop()
 	} else {
-		a.startCycle()
+		a.stopLoop()
 	}
 }
 
-// startCycle begins alternating the lid on the configured interval, moving
+// setLoopChecked updates the checkbox without triggering onLoopToggle.
+// UI thread only.
+func (a *LidApp) setLoopChecked(checked bool) {
+	a.loopSuppress = true
+	a.loopChk.SetChecked(checked)
+	a.loopSuppress = false
+}
+
+// startLoop begins alternating the lid on the configured wait time, moving
 // opposite the current position first. UI thread only.
-func (a *LidApp) startCycle() {
-	if a.cycleRunning {
+func (a *LidApp) startLoop() {
+	if a.loopRunning {
 		return
 	}
 
-	interval := time.Duration(int(a.cycleMinEdit.Value())) * time.Minute
+	interval := time.Duration(int(a.loopMinEdit.Value())) * time.Minute
 
 	// First move is whichever direction the lid is not already in.
 	first := OpLidOpen
@@ -405,68 +427,68 @@ func (a *LidApp) startCycle() {
 
 	stop := make(chan struct{})
 	reset := make(chan int, 1)
-	a.cycleStop = stop
-	a.cycleReset = reset
-	a.cycleRunning = true
-	a.cycleGen++
+	a.loopStop = stop
+	a.loopReset = reset
+	a.loopRunning = true
+	a.loopGen++
 
-	a.cycleBtn.SetText("Stop")
-	a.cycleMinEdit.SetEnabled(false)
-	a.cycleStateLbl.SetText(cycleRunningText)
+	a.setLoopChecked(true)
+	a.loopMinEdit.SetEnabled(false)
+	a.loopStateLbl.SetText(loopRunningText)
 
 	// The goroutine gets its own channels and generation, so it never races
 	// with the UI thread reassigning the fields.
-	go a.cycleLoop(a.cycleGen, stop, reset, interval, first)
+	go a.loopRun(a.loopGen, stop, reset, interval, first)
 }
 
-// stopCycle halts the cycle and returns the UI to its idle state.
-// Safe to call when no cycle is running. UI thread only.
-func (a *LidApp) stopCycle() {
-	if a.cycleStop != nil {
-		close(a.cycleStop)
-		a.cycleStop = nil
+// stopLoop halts the loop and returns the UI to its idle state.
+// Safe to call when no loop is running. UI thread only.
+func (a *LidApp) stopLoop() {
+	if a.loopStop != nil {
+		close(a.loopStop)
+		a.loopStop = nil
 	}
-	a.resetCycleUI()
+	a.resetLoopUI()
 }
 
-// cycleFailed tears the cycle down after the loop goroutine has already
+// loopFailed tears the loop down after the loop goroutine has already
 // exited on its own, then reports why. UI thread only.
-func (a *LidApp) cycleFailed(gen int, title, msg string) {
-	if !a.cycleRunning || gen != a.cycleGen {
-		return // already stopped, or superseded by a newer cycle
+func (a *LidApp) loopFailed(gen int, title, msg string) {
+	if !a.loopRunning || gen != a.loopGen {
+		return // already stopped, or superseded by a newer loop
 	}
 	// The goroutine is gone; drop the channel without closing it so a later
-	// stopCycle cannot close it a second time.
-	a.cycleStop = nil
-	a.resetCycleUI()
+	// stopLoop cannot close it a second time.
+	a.loopStop = nil
+	a.resetLoopUI()
 
 	walk.MsgBox(a.mainWindow, title, msg, walk.MsgBoxIconError)
 }
 
-// resetCycleUI restores the Cycle widgets to their idle appearance.
-func (a *LidApp) resetCycleUI() {
-	a.cycleRunning = false
-	a.cycleBtn.SetText("Start")
-	a.cycleMinEdit.SetEnabled(a.connected)
-	a.cycleStateLbl.SetText(cycleIdleText)
-	a.cycleNextLbl.SetText(cycleNextIdleText)
-	a.cycleTimeLbl.SetText(cycleTimeIdleText)
+// resetLoopUI restores the Loop widgets to their idle appearance.
+func (a *LidApp) resetLoopUI() {
+	a.loopRunning = false
+	a.setLoopChecked(false)
+	a.loopMinEdit.SetEnabled(a.connected)
+	a.loopStateLbl.SetText(loopIdleText)
+	a.loopNextLbl.SetText(loopNextIdleText)
+	a.loopTimeLbl.SetText(loopTimeIdleText)
 }
 
-// cycleLoop owns the cycle schedule. It runs on its own goroutine and is
-// signalled by the UI thread through cycleStop and cycleReset.
-func (a *LidApp) cycleLoop(gen int, stop <-chan struct{}, reset <-chan int, interval time.Duration, nextOp int) {
-	ticker := time.NewTicker(cycleTickInterval)
+// loopRun owns the loop schedule. It runs on its own goroutine and is
+// signalled by the UI thread through loopStop and loopReset.
+func (a *LidApp) loopRun(gen int, stop <-chan struct{}, reset <-chan int, interval time.Duration, nextOp int) {
+	ticker := time.NewTicker(loopTickInterval)
 	defer ticker.Stop()
 
 	// The first move fires immediately; the countdown covers the wait to the
 	// one after it.
-	if !a.cycleMove(gen, nextOp) {
+	if !a.loopMove(gen, nextOp) {
 		return
 	}
 	nextOp = oppositeOp(nextOp)
 	deadline := time.Now().Add(interval)
-	a.setCycleStatus(gen, nextOp, interval)
+	a.setLoopStatus(gen, nextOp, interval)
 
 	for {
 		select {
@@ -478,42 +500,42 @@ func (a *LidApp) cycleLoop(gen int, stop <-chan struct{}, reset <-chan int, inte
 			// schedule the opposite of whatever was pressed.
 			nextOp = oppositeOp(op)
 			deadline = time.Now().Add(interval)
-			a.setCycleStatus(gen, nextOp, interval)
+			a.setLoopStatus(gen, nextOp, interval)
 
 		case <-ticker.C:
 			remain := time.Until(deadline)
 			if remain <= 0 {
-				if !a.cycleMove(gen, nextOp) {
+				if !a.loopMove(gen, nextOp) {
 					return
 				}
 				nextOp = oppositeOp(nextOp)
 				deadline = time.Now().Add(interval)
 				remain = interval
 			}
-			a.setCycleStatus(gen, nextOp, remain)
+			a.setLoopStatus(gen, nextOp, remain)
 		}
 	}
 }
 
-// cycleMove runs one scheduled lid command. It reports false if the move
-// failed, in which case the cycle has been torn down and the loop must exit.
-func (a *LidApp) cycleMove(gen, op int) bool {
+// loopMove runs one scheduled lid command. It reports false if the move
+// failed, in which case the loop has been torn down and the goroutine must exit.
+func (a *LidApp) loopMove(gen, op int) bool {
 	a.cmdMu.Lock()
 	err := a.driver.RunOperation(slaveAddr, op)
 	a.cmdMu.Unlock()
 
 	if err != nil {
 		a.mainWindow.Synchronize(func() {
-			a.cycleFailed(gen, "Cycle Error",
-				fmt.Sprintf("Cycle stopped — %s failed:\n%v", opLabel(op), err))
+			a.loopFailed(gen, "Loop Error",
+				fmt.Sprintf("Loop stopped — %s failed:\n%v", opLabel(op), err))
 		})
 		return false
 	}
 	return true
 }
 
-// setCycleStatus updates the Cycle indicator and countdown from any goroutine.
-func (a *LidApp) setCycleStatus(gen, nextOp int, remain time.Duration) {
+// setLoopStatus updates the Loop indicator and countdown from any goroutine.
+func (a *LidApp) setLoopStatus(gen, nextOp int, remain time.Duration) {
 	if remain < 0 {
 		remain = 0
 	}
@@ -523,12 +545,12 @@ func (a *LidApp) setCycleStatus(gen, nextOp int, remain time.Duration) {
 	next := "Next:  " + opLabel(nextOp)
 
 	a.mainWindow.Synchronize(func() {
-		if !a.cycleRunning || gen != a.cycleGen {
+		if !a.loopRunning || gen != a.loopGen {
 			return // stopped or superseded between the send and the callback
 		}
-		a.cycleStateLbl.SetText(cycleRunningText)
-		a.cycleNextLbl.SetText(next)
-		a.cycleTimeLbl.SetText(text)
+		a.loopStateLbl.SetText(loopRunningText)
+		a.loopNextLbl.SetText(next)
+		a.loopTimeLbl.SetText(text)
 	})
 }
 
@@ -580,12 +602,12 @@ func (a *LidApp) setAlarm(active bool, code int32) {
 	a.mainWindow.Synchronize(func() {
 		if active {
 			a.alarmLbl.SetText(fmt.Sprintf("⚠  0x%04X", code))
-			// An alarm aborts the cycle. cycleRunning flips false on the first
+			// An alarm aborts the loop. loopRunning flips false on the first
 			// hit, so a persistent alarm produces exactly one dialog.
-			if a.cycleRunning {
-				a.stopCycle()
-				walk.MsgBox(a.mainWindow, "Cycle Stopped",
-					fmt.Sprintf("Cycle stopped — drive alarm 0x%04X.", code),
+			if a.loopRunning {
+				a.stopLoop()
+				walk.MsgBox(a.mainWindow, "Loop Stopped",
+					fmt.Sprintf("Loop stopped — drive alarm 0x%04X.", code),
 					walk.MsgBoxIconError)
 			}
 		} else {
