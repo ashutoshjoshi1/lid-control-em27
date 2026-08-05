@@ -1,0 +1,728 @@
+﻿=== PAGE 66 ===
+Stored data (SD) operation
+2  Operation
+66
+	
+ Selection of operation data number
+There are three methods to select the operation data number to be started as shown below.
+	• Selection by NET selection number
+	• Direct selection (D-SEL0 to D-SEL7)
+	• Selection using the M0 to M7 inputs
+The order of the priority is: NET selection number, direct selection , M0 to M7 inputs.
+	
+z NET selection number
+The NET selection number is used to set the operation data number via the remote I/O.
+If an operation data number other than 0 to 255 is set, the NET selection number is disabled, and direct selection or 
+selection using the M0 to M7 inputs is enabled.
+	
+z Direct selection
+The direct selection is a method in which the operation data number is set with the parameter and the operation data 
+number is selected by D-SEL0 to D-SEL7 input.
+If all the D-SLE0 to D-SEL7 inputs are turned OFF or more than one input are turned ON, the direct selection is 
+disabled, and selection using the M0 to M7 inputs is enabled.
+Related parameters
+MEXE02 tree view
+Parameter name
+Description
+Initial 
+value
+I/O action and function
+D-SEL drive start 
+function
+Sets how to start the motor when the D-SEL input has 
+been turned ON.
+Setting range 
+0: Only operation data number selection 
+1: Operation data number selection+START function
+1
+D-SEL0 operation 
+number selection
+Sets the operation data number that is started when 
+each D-SEL input is turned ON.
+Setting range 
+0 to 255: Operation data number
+0
+D-SEL1 operation 
+number selection
+1
+D-SEL2 operation 
+number selection
+2
+D-SEL3 operation 
+number selection
+3
+D-SEL4 operation 
+number selection
+4
+D-SEL5 operation 
+number selection
+5
+D-SEL6 operation 
+number selection
+6
+D-SEL7 operation 
+number selection
+7
+	
+z Selection using the M0 to M7 inputs
+This is a method in which the operation data number is selected by combining ON/OFF of the M0 to M7 inputs.
+Operation data 
+number
+M7
+M6
+M5
+M4
+M3
+M2
+M1
+M0
+0
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+1
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+ON
+2
+OFF
+OFF
+OFF
+OFF
+OFF
+OFF
+ON
+OFF
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+• 
+• 
+•
+253
+ON
+ON
+ON
+ON
+ON
+ON
+OFF
+ON
+254
+ON
+ON
+ON
+ON
+ON
+ON
+ON
+OFF
+255
+ON
+ON
+ON
+ON
+ON
+ON
+ON
+ON
+
+
+=== PAGE 292 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+292
+8	
+Example of data setting in Modbus RTU  
+mode
+8-1	
+Remote I/O command
+These are commands related to remote I/O. The set values are stored in RAM.
+Register address
+Name
+Description
+Initial 
+value
+R/W
+Upper
+Lower
+114 
+(0072h)
+115 
+(0073h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command (2nd)."
+−1
+R/W
+116 
+(0074h)
+117 
+(0075h)
+Driver input 
+command (2nd)
+The input command same as "Driver input command 
+(reference)" is set automatically.
+0
+R/W
+118 
+(0076h)
+119 
+(0077h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command 
+(automatic OFF)."
+−1
+R/W
+120 
+(0078h)
+121 
+(0079h)
+Driver input 
+command 
+(automatic OFF)
+The input command same as "Driver input command 
+(reference)" is set automatically. When the input signal is 
+turned ON with this command, it is turned OFF 
+automatically after 250 µs.
+0
+R/W
+122 
+(007Ah)
+123 
+(007Bh)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command 
+(reference)."
+−1
+R/W
+124 
+(007Ch)
+125 
+(007Dh)
+Driver input 
+command 
+(reference)
+Sets the input command to the driver.  
+(Details of bit arrangement _ Next paragraph)
+0
+R/W
+126 
+(007Eh)
+127 
+(007Fh)
+Driver output status
+Acquires the output status of the driver.  
+(Details of bit arrangement _p.293)
+−
+R
+	
+ Driver input command
+These are the driver input signals that can be accessed via Modbus communication. They can be accessed by one 
+register (16 bits).
+	
+z Upper
+Register 
+address
+Description
+124 
+(007Ch)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+−
+−
+−
+−
+−
+−
+−
+−
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+−
+−
+−
+−
+−
+−
+−
+−
+	
+z Lower
+Register 
+address
+Description *
+125 
+(007Dh)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+R-IN15 
+[RV-POS]
+R-IN14 
+[FW-POS]
+R-IN13 
+[RV-JOG-P]
+R-IN12 
+[FW-JOG-P]
+R-IN11 
+[SSTART]
+R-IN10 
+[D-SEL2]
+R-IN9 
+[D-SEL1]
+R-IN8 
+[D-SEL0]
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-IN7 
+[ALM-RST]
+R-IN6 
+[FREE]
+R-IN5 
+[STOP]
+R-IN4 
+[ZHOME]
+R-IN3 
+[START]
+R-IN2 
+[M2]
+R-IN1 
+[M1]
+R-IN0 
+[M0]
+	* [  ]: Initial value
+
+
+=== PAGE 367 ===
+I/O commands
+7  Address/code lists
+367
+2	
+I/O commands
+These are commands related to I/O. The set values are stored in RAM.
+They are not used in the industrial network. The industrial network uses an area exclusive for I/O.
+Register address
+Name
+Description
+Initial 
+value
+R/W
+Upper
+Lower
+114 
+(0072h)
+115 
+(0073h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command (2nd)."
+−1
+R/W
+116 
+(0074h)
+117 
+(0075h)
+Driver input 
+command (2nd)
+The input command same as "Driver input command 
+(reference)" is set automatically.
+0
+R/W
+118 
+(0076h)
+119 
+(0077h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command (automatic 
+OFF)."
+−1
+R/W
+120 
+(0078h)
+121 
+(0079h)
+Driver input 
+command 
+(automatic OFF)
+The input command same as "Driver input command 
+(reference)" is set automatically. When the input signal is 
+turned ON with this command, it is turned OFF automatically 
+after 250 µs.
+0
+R/W
+122 
+(007Ah)
+123 
+(007Bh)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command (reference)."
+−1
+R/W
+124 
+(007Ch)
+125 
+(007Dh)
+Driver input 
+command 
+(reference)
+Sets the input command to the driver.  
+(Details of bit arrangement _Next paragraph)
+0
+R/W
+126 
+(007Eh)
+127 
+(007Fh)
+Driver output 
+status
+Acquires the output status of the driver.  
+(Details of bit arrangement _p.368)
+−
+R
+	
+ Driver input command
+These are the driver input signals that can be accessed via Modbus communication. They can be accessed by one 
+register (16 bits).
+	
+z Upper
+Register 
+address
+Description
+124 
+(007Ch)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+−
+−
+−
+−
+−
+−
+−
+−
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+−
+−
+−
+−
+−
+−
+−
+−
+	
+z Lower
+[  ]: Initial value. They can be changed by parameters. (Parameters _p.425, assignment of input signals _p.436)
+Register 
+address
+Description
+125 
+(007Dh)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+R-IN15 
+[RV-POS]
+R-IN14 
+[FW-POS]
+R-IN13 
+[RV-JOG-P]
+R-IN12 
+[FW-JOG-P]
+R-IN11 
+[SSTART]
+R-IN10 
+[D-SEL2]
+R-IN9 
+[D-SEL1]
+R-IN8 
+[D-SEL0]
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-IN7 
+[ALM-RST]
+R-IN6 
+[FREE]
+R-IN5 
+[STOP]
+R-IN4 
+[ZHOME]
+R-IN3 
+[START]
+R-IN2 
+[M2]
+R-IN1 
+[M1]
+R-IN0 
+[M0]
+
+
+=== PAGE 377 ===
+Monitor commands
+7  Address/code lists
+377
+Modbus 
+communication 
+register address
+Name
+Description
+Industrial 
+network 
+command code
+Upper
+Lower
+192 
+(00C0h)
+193 
+(00C1h)
+Communication error 
+history 10
+Shows the oldest communication error code history.
+8288 
+(2060h)
+194 
+(00C2h)
+195 
+(00C3h)
+Present selected data 
+number
+Shows the operation data number currently selected. 
+The order of the priority is: NET selection number, 
+direct selection (D-SEL), M0 to M7 inputs.
+8289 
+(2061h)
+196 
+(00C4h)
+197 
+(00C5h)
+Present operation data 
+number
+Shows the operation data number executed in stored 
+data operation or continuous macro operation. In 
+operation not using operation data, −1 is displayed.  
+−1 is displayed also during stop.
+8290 
+(2062h)
+198 
+(00C6h)
+199 
+(00C7h)
+Command position
+Shows the current command position. When the wrap 
+function is enabled, the value on the wrap coordinate 
+is displayed.
+8291 
+(2063h)
+200 
+(00C8h)
+201 
+(00C9h)
+Command speed (r/min)
+Shows the current command speed. (r/min)
+8292 
+(2064h)
+202 
+(00CAh)
+203 
+(00CBh)
+Command speed (Hz)
+Shows the current command speed. (Hz)
+8293 
+(2065h)
+204 
+(00CCh)
+205 
+(00CDh)
+Feedback position
+Shows the current feedback position. When the wrap 
+function is enabled, the value on the wrap coordinate 
+is displayed.
+8294 
+(2066h)
+206 
+(00CEh)
+207 
+(00CFh)
+Feedback speed (r/min)
+Shows the current feedback speed. (r/min)
+8295 
+(2067h)
+208 
+(00D0h)
+209 
+(00D1h)
+Feedback speed (Hz)
+Shows the current feedback speed. (Hz)
+8296 
+(2068h)
+210 
+(00D2h)
+211 
+(00D3h)
+Remaining dwell time
+Shows the remaining time in the drive-complete delay 
+time or dwell. (ms)
+8297 
+(2069h)
+212 
+(00D4h)
+213 
+(00D5h)
+Direct I/O
+Shows the status of direct input and output, extended 
+input, differential output, and virtual input.  
+(Bit arrangement _p.384)
+8298 
+(206Ah)
+214 
+(00D6h)
+215 
+(00D7h)
+Torque monitor
+Shows the current torque with the ratio against the 
+maximum holding torque.
+8299 
+(206Bh)
+218 
+(00DAh)
+219 
+(00DBh)
+Cumulative load monitor
+Shows the cumulative value of the load in operation. 
+(Internal unit) 
+The load is cumulated regardless of the rotation 
+direction of the motor.  
+(Details of the cumulative load monitor _p.479)
+8301 
+(206Dh)
+222 
+(00DEh)
+223 
+(00DFh)
+Target position
+	• Shows the target command position in the following 
+operations in an absolute coordinate.  
+− Positioning SD operation, inching operation, 
+high-speed return-to-home operation, return-to-
+home operation (at the time of offset travel)
+	• Shows the operation starting position in the 
+following operations.  
+− Continuous SD operation, continuous macro 
+operation, JOG macro operations other than inching 
+operation, return-to-home operation (when a sensor 
+is used, in push mode)
+8303 
+(206Fh)
+224 
+(00E0h)
+225 
+(00E1h)
+Next number
+Shows the operation data number specified in "Next 
+data number" of the operation data in operation. The 
+value is latched also after the operation is complete. 
+When "Link" is "No Link" or "Next data number" is 
+"Stop," −1 is displayed.
+8304 
+(2070h)
+226 
+(00E2h)
+227 
+(00E3h)
+Loop origin number
+Shows the operation data number that is the starting 
+point of the loop in loop operation (extended loop 
+operation). When loop is not executed or stopped, −1 
+is displayed.
+8305 
+(2071h)
+
+

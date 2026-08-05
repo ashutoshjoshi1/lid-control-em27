@@ -1,0 +1,646 @@
+﻿=== PAGE 67 ===
+Stored data (SD) operation
+2  Operation
+67
+	
+ Timing charts
+	
+z Positioning operation
+	
+2 ms or more
+2 ms or more
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+START input
+M0 to M7 input
+READY output
+MOVE output
+IN-POS output
+Internal speed command
+2 ms or less
+2 ms or less
+	
+z Continuous operation
+	
+2 ms or more
+2 ms or more
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+START input
+M0 to M7 input
+READY output
+MOVE output
+IN-POS output
+Internal speed command
+2 ms or less
+2 ms or less
+
+
+=== PAGE 297 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+297
+2.	 Send the following query and turn FW-POS ON. Continuous operation is started.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+40h
+Value written to the register address 
+=FW-POS ON (4000h) *
+Value write (lower)
+00h
+Error check (lower)
+28h
+Calculation result of CRC-16
+Error check (upper)
+12h
+	* FW-POS is assigned to bit15 of the driver input command (007Dh) in initial setting.  
+(0100 0000 0000 0000 in a binary number=4000h in a hexadecimal number)
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+40h
+Same as query
+Value write (lower)
+00h
+Error check (lower)
+28h
+Calculation result of CRC-16
+Error check (upper)
+12h
+3.	 To stop continuous operation, send the following query and turn FW-POS OFF again. The motor decelerates to a 
+stop.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Value written to the register address 
+=FW-POS OFF (0000h)
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Same as query
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+
+
+=== PAGE 298 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+298
+8-4	
+High-speed return-to-home operation
+As an example, here is a description how to execute the following high-speed return-to-home operation.
+	
+z Setting example
+	• Address number (server address): 1
+	• Operation condition: Initial value
+	
+z Operation procedure
+1.	 Send the following query and turn ZHOME ON. High-speed return-to-home operation is started.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Value written to the register address 
+=ZHOME ON (0010h) *
+Value write (lower)
+10h
+Error check (lower)
+18h
+Calculation result of CRC-16
+Error check (upper)
+1Eh
+	* ZHOME is assigned to bit4 of the driver input command (007Dh) in initial setting.  
+(10,000 in a binary number=0010h in a hexadecimal number)
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Same as query
+Value write (lower)
+10h
+Error check (lower)
+18h
+Calculation result of CRC-16
+Error check (upper)
+1Eh
+2.	 When high-speed return-to-home operation is complete, send the following query and turn ZHOME OFF again.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Value written to the register address 
+=ZHOME OFF (0000h)
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+
+
+=== PAGE 299 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+299
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Same as query
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+
+
+=== PAGE 300 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+300
+9	
+Data setting method
+9-1	
+Overview of setting method
+There are three methods to set data via Modbus communication.
+The communication specification of Modbus allows reading/writing from/to successive addresses when multiple data 
+pieces are handled.
+	
+ When operation data is set
+Input method
+Features
+Direct data operation
+Rewriting of data and start of operation can be executed at the same time. (_p.308)
+Direct reference
+	• Data is set by specifying the address.
+	• If the data consists of successive addresses, multiple data pieces can be handled with 
+one query.
+	• The set data is operated by inputting the remote I/O.
+Indirect reference
+	• This is a method in which data is stored in addresses exclusive for sending (indirect 
+reference addresses) and set.
+	• Even if addresses of the data to be set are not successive, multiple data pieces can be 
+handled with one query because the indirect reference addresses are successive.
+	• The set data is operated by inputting the remote I/O.
+	
+ When setting of parameters, monitoring, or information, etc. is executed
+	• When addresses are successive: Set data by using direct reference.
+	• When addresses are not successive: If indirect reference is used, multiple commands can be executed with one 
+query.
+Here, direct reference and indirect reference are explained.
+9-2	
+Direct reference
+Direct reference is a method in which data is set by specifying addresses. Multiple successive addresses can be sent 
+with one query. However, if addresses to be set are not successive, queries as many as the number of addresses should 
+be sent.
+Operation data has two types of addresses: addresses arranged by operation data number and 
+addresses arranged by item of operation data. Use them respectively in accordance with your 
+purpose. (_p.387)
+
+
+=== PAGE 301 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+301
+9-3	
+Indirect reference
+Indirect reference is a method in which data is stored in addresses exclusive for sending (indirect reference addresses) 
+and set. Even if addresses of the data to be set are not successive, multiple data pieces can be sent with one query 
+because the indirect reference addresses are successive.
+The addresses of the data to be set are stored in "Address" of indirect reference. The set values of data are stored in 
+"Area" of indirect reference.
+Indirect reference address 2
+Upper: 4868 (1304h)
+Lower: 4869 (1305h)
+Indirect reference address 1
+Upper: 4866 (1302h)
+Lower: 4867 (1303h)
+One query send is enough because 
+the addresses are successive
+Indirect reference address 0
+Upper: 4864 (1300h)
+Lower: 4865 (1301h)
+Indirect reference area 2
+Upper: 4932 (1344h)
+Lower: 4933 (1345h)
+Indirect reference area 1
+Upper: 4930 (1342h)
+Lower: 4931 (1343h)
+Indirect reference area 0
+Upper: 4928 (1340h)
+Lower: 4929 (1341h)
+Address of 
+No.1 position
+Data of 
+No.1 position
+Address of 
+No.2 stop
+Data of 
+No.2 stop
+Address of 
+No.3 operating speed
+Data of 
+No.3 operating speed
+	
+ Addresses and areas of indirect reference
+Indirect reference has 32 addresses and 32 areas (0 to 31).
+Name
+Description
+Indirect reference address setting (0)
+Stores the ID of data to be sent in indirect reference.  
+The ID is a unique number retained inside the driver and assigned to each 
+setting item.  
+In Modbus communication, a value twice as much as the ID is the register 
+address. Be sure to input the "half value of the register address."
+Indirect reference address setting (1)
+· 
+· 
+·
+Indirect reference address setting (30)
+Indirect reference address setting (31)
+Indirect reference area 0
+Stores the set value of data to be sent in indirect reference.
+Indirect reference area 1
+· 
+· 
+·
+Indirect reference area 30
+Indirect reference area 31
+
+
+=== PAGE 302 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+302
+Related parameters
+MEXE02 tree view
+Name
+Description
+Initial 
+value
+Communication & I/F
+Indirect reference address setting (0)
+Sets the ID of the data to be stored 
+in the indirect reference address.
+Setting range 
+0 to 65,535 (0 to FFFFh)
+0
+Indirect reference address setting (1)
+Indirect reference address setting (2)
+Indirect reference address setting (3)
+Indirect reference address setting (4)
+Indirect reference address setting (5)
+Indirect reference address setting (6)
+Indirect reference address setting (7)
+Indirect reference address setting (8)
+Indirect reference address setting (9)
+Indirect reference address setting (10)
+Indirect reference address setting (11)
+Indirect reference address setting (12)
+Indirect reference address setting (13)
+Indirect reference address setting (14)
+Indirect reference address setting (15)
+Indirect reference address setting (16)
+Indirect reference address setting (17)
+Indirect reference address setting (18)
+Indirect reference address setting (19)
+Indirect reference address setting (20)
+Indirect reference address setting (21)
+Indirect reference address setting (22)
+Indirect reference address setting (23)
+Indirect reference address setting (24)
+Indirect reference address setting (25)
+Indirect reference address setting (26)
+Indirect reference address setting (27)
+Indirect reference address setting (28)
+Indirect reference address setting (29)
+Indirect reference address setting (30)
+Indirect reference address setting (31)
+
+
+=== PAGE 303 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+303
+	
+z Register addresses of indirect reference addresses
+Register address
+Name
+Register address
+Name
+Upper
+Lower
+Upper
+Lower
+4864 
+(1300h)
+4865 
+(1301h)
+Indirect reference address setting (0)
+4896 
+(1320h)
+4897 
+(1321h)
+Indirect reference address setting (16)
+4866 
+(1302h)
+4867 
+(1303h)
+Indirect reference address setting (1)
+4898 
+(1322h)
+4899 
+(1323h)
+Indirect reference address setting (17)
+4868 
+(1304h)
+4869 
+(1305h)
+Indirect reference address setting (2)
+4900 
+(1324h)
+4901 
+(1325h)
+Indirect reference address setting (18)
+4870 
+(1306h)
+4871 
+(1307h)
+Indirect reference address setting (3)
+4902 
+(1326h)
+4903 
+(1327h)
+Indirect reference address setting (19)
+4872 
+(1308h)
+4873 
+(1309h)
+Indirect reference address setting (4)
+4904 
+(1328h)
+4905 
+(1329h)
+Indirect reference address setting (20)
+4874 
+(130Ah)
+4875 
+(130Bh)
+Indirect reference address setting (5)
+4906 
+(132Ah)
+4907 
+(132Bh)
+Indirect reference address setting (21)
+4876 
+(130Ch)
+4877 
+(130Dh)
+Indirect reference address setting (6)
+4908 
+(132Ch)
+4909 
+(132Dh)
+Indirect reference address setting (22)
+4878 
+(130Eh)
+4879 
+(130Fh)
+Indirect reference address setting (7)
+4910 
+(132Eh)
+4911 
+(132Fh)
+Indirect reference address setting (23)
+4880 
+(1310h)
+4881 
+(1311h)
+Indirect reference address setting (8)
+4912 
+(1330h)
+4913 
+(1331h)
+Indirect reference address setting (24)
+4882 
+(1312h)
+4883 
+(1313h)
+Indirect reference address setting (9)
+4914 
+(1332h)
+4915 
+(1333h)
+Indirect reference address setting (25)
+4884 
+(1314h)
+4885 
+(1315h)
+Indirect reference address setting (10)
+4916 
+(1334h)
+4917 
+(1335h)
+Indirect reference address setting (26)
+4886 
+(1316h)
+4887 
+(1317h)
+Indirect reference address setting (11)
+4918 
+(1336h)
+4919 
+(1337h)
+Indirect reference address setting (27)
+4888 
+(1318h)
+4889 
+(1319h)
+Indirect reference address setting (12)
+4920 
+(1338h)
+4921 
+(1339h)
+Indirect reference address setting (28)
+4890 
+(131Ah)
+4891 
+(131Bh)
+Indirect reference address setting (13)
+4922 
+(133Ah)
+4923 
+(133Bh)
+Indirect reference address setting (29)
+4892 
+(131Ch)
+4893 
+(131Dh)
+Indirect reference address setting (14)
+4924 
+(133Ch)
+4925 
+(133Dh)
+Indirect reference address setting (30)
+4894 
+(131Eh)
+4895 
+(131Fh)
+Indirect reference address setting (15)
+4926 
+(133Eh)
+4927 
+(133Fh)
+Indirect reference address setting (31)
+
+

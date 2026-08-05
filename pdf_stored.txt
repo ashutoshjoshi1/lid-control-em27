@@ -1,0 +1,1195 @@
+﻿=== PAGE 67 ===
+Stored data (SD) operation
+2  Operation
+67
+	
+ Timing charts
+	
+z Positioning operation
+	
+2 ms or more
+2 ms or more
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+START input
+M0 to M7 input
+READY output
+MOVE output
+IN-POS output
+Internal speed command
+2 ms or less
+2 ms or less
+	
+z Continuous operation
+	
+2 ms or more
+2 ms or more
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+START input
+M0 to M7 input
+READY output
+MOVE output
+IN-POS output
+Internal speed command
+2 ms or less
+2 ms or less
+
+
+=== PAGE 68 ===
+Stored data (SD) operation
+2  Operation
+68
+3-3	
+Positioning SD operation
+Positioning SD operation is an operation executed by setting the motor operating speed, position (travel amount) and 
+other items as operation data. When positioning SD operation is executed, the motor is started running at the starting 
+speed and accelerates until the operating speed is reached. Once the operating speed is reached, that speed is 
+maintained. Then the motor decelerates when the target position approaches, and finally comes to a stop.
+	
+z Operation
+When start position < target position (operation in forward direction)
+Speed
+Starting/
+changing speed
+Position
+(travel amount)
+Stop
+Time
+0
+Operating speed
+Starting speed
+Stop current
+Operating current
+Drive-complete
+delay time
+Speed
+Position
+Starting 
+position
+Target
+position
+Travel amount
+0
+Operating speed
+Starting speed
+Current
+Time
+When start position > target position (operation in reverse direction)
+Starting/
+changing speed
+Position
+(travel amount)
+Stop
+Time
+Operating speed
+Starting speed
+Stop current
+Operating current
+Drive-complete
+delay time
+Speed
+Position
+Starting
+position
+Starting
+position
+Target
+position
+Target
+position
+Travel amount
+0
+Speed
+0
+Operating speed
+Starting speed
+Current
+Time
+The travel amount of positioning SD operation is +2,147,483,647 steps. When the travel amount of 
+the motor exceeds the maximum travel amount of the upper limit or lower limit, an alarm of 
+operation data error is generated.
+	• The rotation direction (forward/reverse) of positioning SD operation depends on the setting of 
+"Position" of operation data.  
+When a positive value is set, the motor rotates in the forward direction. When a negative value is 
+set, it rotates in the reverse direction.
+	• When a negative value is set to "Operating speed" of operation data, it is considered to be a speed 
+of absolute value.
+
+
+=== PAGE 69 ===
+Stored data (SD) operation
+2  Operation
+69
+	
+ Absolute positioning
+Sets the target position on coordinates with the home position as a reference.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600
+Setting of operation data
+	
+Operation image
+	
+500
+0
+100
+8,600
+2,000
+Speed
+Position
+500
+1.5
+1.5
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 70 ===
+Stored data (SD) operation
+2  Operation
+70
+	
+ Incremental positioning (based on command position)
+Sets the travel amount from the present command position to the target position.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600
+Setting of operation data
+	
+Operation image
+	
+500
+0
+100
+8,600
+2,000
+Speed
+Position
+500
+1.5
+1.5
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 71 ===
+Stored data (SD) operation
+2  Operation
+71
+	
+ Incremental positioning (based on feedback position)
+Sets the travel amount from the present feedback position to the target position.
+	
+z Usage example 
+When the motor is operated from the feedback position 100 to the target position 8,600
+Setting of operation data
+	
+Operation image
+	
+500
+0
+100
+8,600
+2,000
+Speed
+Position
+500
+1.5
+1.5
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+The reference position of the operation based on the feedback position varies depending on the 
+load. It is a convenient method to start the next operation from a status in which the command 
+position and the feedback position are different as in the case of positioning push-motion SD 
+operation.
+
+
+=== PAGE 72 ===
+Stored data (SD) operation
+2  Operation
+72
+	
+ Wrap absolute positioning
+Sets the target position within the wrap range to the operation data.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600  
+(Wrap setting range 18 rev, wrap offset ratio 50%)
+Setting of wrap function
+For the details of the wrap function, refer to "Wrap function" on p.151.
+	
+Setting of operation data
+	
+Position coordinate image
+0
+4,500
+-9,000
+-4,500
+100
+8,600
+Operation image
+Speed
+Time
+0
+2,000
+1.5
+1.5
+500
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 73 ===
+Stored data (SD) operation
+2  Operation
+73
+	
+ Wrap proximity positioning
+Sets the target position within the wrap range. Positioning SD operation is executed in the rotation direction near to 
+the target position.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600  
+(Wrap setting range 18 rev, wrap offset ratio 50%)
+Setting of wrap function
+	
+Setting of operation data
+	
+Position coordinate image
+0
+4,500
+-9,000
+-4,500
+100
+8,600
+Operation image
+Speed
+Time
+0
+2,000
+1.5
+1.5
+500
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 74 ===
+Stored data (SD) operation
+2  Operation
+74
+	
+ Wrap forward direction absolute positioning
+Sets the target position within the wrap range to the operation data. Positioning SD operation is always executed in 
+the forward direction regardless of the target position.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600  
+(Wrap setting range 18 rev, wrap offset ratio 50%)
+Setting of wrap function
+	
+Setting of operation data
+	
+Position coordinate image
+0
+4,500
+-9,000
+-4,500
+100
+8,600
+Operation image
+Speed
+Time
+0
+2,000
+1.5
+1.5
+500
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 75 ===
+Stored data (SD) operation
+2  Operation
+75
+	
+ Wrap reverse direction absolute positioning
+Sets the target position within the wrap range. Positioning SD operation is always executed in the reverse direction 
+regardless of the target position.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600  
+(Wrap setting range 18 rev, wrap offset ratio 50%)
+Setting of wrap function
+	
+Setting of operation data
+	
+Position coordinate image
+0
+4,500
+-9,000
+-4,500
+100
+8,600
+Operation image
+Speed
+Time
+0
+-2,000
+1.5
+1.5
+-500
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON.
+3.	 The READY output is turned OFF, and the motor starts operation.
+4.	 Check that the READY output has been turned OFF and turn the START input OFF.
+5.	 When the operation is complete, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 76 ===
+Stored data (SD) operation
+2  Operation
+76
+	
+z Orbit comparison of positioning SD operation
+The wrap setting range should be 1 rev, and the wrap offset ratio should be 50%. (_"Wrap function" on p.151)
+Operation mode
+• Absolute positioning
+• Incremental positioning 
+ (based on command position)
+• Incremental positioning 
+ (based on feedback position)
+• Wrap absolute positioning
+• Wrap proximity positioning
+• Wrap forward direction absolute 
+ positioning
+• Wrap reverse direction absolute 
+ positioning
+Initial value → Value set to "Position" of operation data
+250 → 900
+250 → -1,400
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-250
+250
+0
+-500
+-100
+-100
+-250
+250
+0
+-500
+-100
+150
+-100
+-250
+250
+0
+-500
+-100
+-400
+-250
+250
+0
+-500
+-400
+-400
+-250
+250
+0
+-500
+-400
+-400
+-150
+* Sets the coordinate of the target 
+position from the home position
+* Sets the travel amount from the 
+command position or the feedback 
+position to the target position.
+* Sets the target position on coordinates 
+with the home position as a reference. 
+Operation is performed within the wrap 
+range.
+* Sets the target position on coordinates 
+with the home position as a reference. 
+Operation in the shortest distance is 
+performed to the target position within 
+the wrap range.
+* Sets the target position on coordinates 
+with the home position as a reference. 
+Operation in the forward direction is 
+performed to the target position within 
+the wrap range.
+* Sets the target position on coordinates 
+with the home position as a reference. 
+Operation in the reverse direction is 
+performed to the target position within 
+the wrap range.
+	* The value in the square is the coordinate of the position where the motor stopped.
+
+
+=== PAGE 77 ===
+Stored data (SD) operation
+2  Operation
+77
+3-4	
+Positioning push-motion SD operation
+Positioning push-motion SD operation is an operation executed by setting the motor operating speed, position (travel 
+amount) and other items as operation data. When positioning push-motion SD operation is executed, rectangular 
+operation (drive without acceleration/deceleration time) is executed at an operating speed set in the operation data. 
+After that, the motor is operated with the speed maintained and stops when it reaches the target position. In addition, 
+if you use the TLC output as a completion signal of push-motion operation, you can judge whether or not push-
+motion against the load occurred during operation.
+Set the operating current of the next data to the value of the operating current before linking or 
+less. If a value larger than that of the operating current before linking, the push-motion current may 
+become larger when operation transits, and unexpected push-motion force may be applied.
+	
+z Operation
+When start position < target position (forward direction)
+Speed
+position
+(travel amount)
+Time
+0
+Operating speed
+Starting speed
+Stop current
+Operating current
+Drive-complete
+delay time
+Speed
+Position
+Starting
+position
+Target
+position
+Travel amount
+0
+Operating speed
+Starting speed
+Current
+Time
+When start position > target position (reverse direction)
+Position
+(travel amount)
+Time
+Starting speed
+Operating speed
+Stop current
+Operating current
+Drive-complete
+delay time
+Speed
+Position
+Starting
+position
+Starting
+position
+Target
+position
+Target
+position
+Travel amount
+0
+Speed
+0
+Starting speed
+Operating speed
+Current
+Time
+	• The travel amount of positioning push-motion SD operation is −2,147,483,648 to  
++2,147,483,647 steps. When the travel amount of the motor exceeds the maximum travel amount 
+of the upper limit or lower limit, an alarm of operation data error is generated.
+	• Since positioning push-motion SD operation is a rectangular operation (drive without 
+acceleration/deceleration time), the motor may not operate normally if the operating speed is too 
+high.
+	• When the motor moves to the Excessive position deviation alarm zone due to an external force, an 
+alarm of overflow rotation is generated.
+Starting
+position
+Target
+position
+Value set in the
+"Excessive position deviation alarm" parameter
+Excessive position deviation
+alarm zone
+Excessive position deviation
+alarm zone
+
+
+=== PAGE 78 ===
+Stored data (SD) operation
+2  Operation
+78
+	• The rotation direction (forward/reverse) of positioning push-motion SD operation depends on the 
+setting of "Position" of operation data. When a positive value is set, the motor rotates in the 
+forward direction. When a negative value is set, it rotates in the reverse direction.
+	• When a negative value is set to "Operating speed" of operation data, it is considered to be a speed 
+of absolute value.
+	
+ Absolute positioning push-motion
+Sets the target position on coordinates with the home position as a reference.
+	
+z Usage example 
+When the motor is operated from the present position to the target position 8,600
+Setting of operation data
+	
+	
+ Incremental positioning push-motion (based on command position)
+Sets the travel amount from the present command position to the target position.
+	
+z Usage example 
+When the motor is operated from the command position 100 to the target position 8,600
+Setting of operation data
+	
+	
+ Incremental positioning push-motion (based on feedback position)
+Sets the travel amount from the present feedback position to the target position.
+	
+z Usage example 
+When the motor is operated from the feedback position 100 to the target position 8,600
+Setting of operation data
+	
+The reference position of the operation based on the feedback position varies depending on the 
+load. It is a convenient method to start the next operation from a status in which the command 
+position and the feedback position are different as in the case of positioning push-motion SD 
+operation.
+	
+ Wrap absolute positioning push-motion
+Set the target position within the wrap range.
+	
+z Usage example 
+When the motor is operated from the present position to the target position 8,600
+Setting of operation data
+	
+
+
+=== PAGE 79 ===
+Stored data (SD) operation
+2  Operation
+79
+	
+ Wrap proximity push-motion
+Sets the target position within the wrap range. Positioning push-motion SD operation is executed in the rotation 
+direction near to the target position.
+	
+z Usage example 
+When the motor is operated from the present position to the target position 8,600
+Setting of operation data
+	
+	
+ Wrap forward direction push-motion
+Sets the target position within the wrap range. Positioning push-motion SD operation is always executed in the 
+forward direction regardless of the target position.
+	
+z Usage example 
+When the motor is operated from the present position to the target position 8,600
+Setting of operation data
+	
+	
+ Wrap reverse direction push-motion
+Sets the target position within the wrap range. Positioning push-motion SD operation is always executed in the 
+reverse direction regardless of the target position.
+	
+z Usage example 
+When the motor is operated from the present position to the target position 8,600
+Setting of operation data
+	
+
+
+=== PAGE 80 ===
+Stored data (SD) operation
+2  Operation
+80
+3-5	
+Continuous SD operation
+Continuous SD operation is an operation executed by setting the operating speed to the operation data. The motor is 
+continuously operated in the forward direction when a positive operating speed is set, and in the reverse direction 
+when a negative operating speed is set.
+	
+z Operation
+0 < operating speed (forward direction)
+Stop current
+Operating current
+Speed
+Starting/
+changing speed
+Position
+Starting position
+Target position
+0
+Operating speed
+Starting speed
+Speed
+Starting/
+changing speed
+Position
+0
+Operating speed
+Starting speed
+Current
+Time
+0 > operating speed (reverse direction)
+Stop current
+Operating current
+Speed
+Starting/
+changing speed
+Position
+Starting position
+Target position
+0
+Starting speed
+Operating speed
+Speed
+Starting/
+changing speed
+Position
+0
+Starting speed
+Operating speed
+Current
+Time
+	• The target position of continuous SD operation is the start position (command position). The 
+"Position" of operation data is not set.
+	• When continuous operation (torque) is set, the operation becomes rectangular operation (drive 
+without acceleration/deceleration time).
+
+
+=== PAGE 81 ===
+Stored data (SD) operation
+2  Operation
+81
+	
+ Continuous operation (Position control)
+Set the operating speed to the operation data to execute operation. When the operation is executed, the motor is 
+started running at the starting speed and accelerates until the operating speed is reached. When the operating speed 
+is reached, operation is continued with the speed maintained. Operation is executed while the position deviation is 
+monitored, so when a load exceeding the torque of the motor is applied, an alarm of overload or excessive position 
+deviation is generated.
+	
+z Usage example
+Setting of operation data
+	
+Operation image
+	
+500
+0
+2,000
+Speed
+Position
+500
+ON
+OFF
+1.5
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON. 
+The READY output is turned OFF, and the motor starts operation.
+3.	 Check that the READY output has been turned OFF and turn the START input OFF.
+4.	 When the STOP input is turned ON, the motor starts deceleration stop.
+5.	 When the motor stops, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+ON
+OFF
+STOP input
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 82 ===
+Stored data (SD) operation
+2  Operation
+82
+	
+ Continuous operation (Speed control)
+Sets the operating speed to the operation data to execute operation. When the operation is executed, the motor is 
+started running at the starting speed and accelerates until the operating speed is reached. When the operating speed 
+is reached, operation is continued with the speed maintained. When the motor enters an overload status, the position 
+deviation is fixed to a certain value. When a load exceeding the torque of the motor is applied, an alarm of overload is 
+generated.
+	
+z Usage example
+Setting of operation data
+	
+Operation image
+	
+500
+0
+2,000
+Speed
+Position
+500
+ON
+OFF
+1.5
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON. 
+The READY output is turned OFF, and the motor starts operation.
+3.	 Check that the READY output has been turned OFF and turn the START input OFF.
+4.	 When the STOP input is turned ON, the motor starts deceleration stop.
+5.	 When the motor stops, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+ON
+OFF
+STOP input OFF
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 83 ===
+Stored data (SD) operation
+2  Operation
+83
+	
+ Continuous operation (Push-motion)
+Set the operating speed to the operation data to execute operation. When the operation is executed, the motor is 
+started running at the starting speed and accelerates until the operating speed is reached. When the operating speed 
+is reached, operation is continued with the speed maintained. When a mechanism installed to the motor presses 
+against a load, pressure is continuously applied to the load.
+	
+z Usage example
+Setting of operation data
+	
+Operation image
+	
+500
+0
+2,000
+Speed
+Position
+Push
+Push
+500
+ON
+OFF
+1.5
+2,000
+Speed
+Time
+0
+START
+ON
+OFF
+TLC
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON. 
+The READY output is turned OFF, and the motor starts operation.
+3.	 Check that the READY output has been turned OFF and turn the START input OFF.
+4.	 When the STOP input is turned ON, the motor starts deceleration stop.
+5.	 When the motor stops, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+ON
+OFF
+STOP input
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 84 ===
+Stored data (SD) operation
+2  Operation
+84
+	
+ Continuous operation (Torque control)
+Rectangular operation (drive without acceleration/deceleration time) of the motor is executed at the speed set in the 
+operation data, and operation is continued with the speed maintained. When a mechanism installed to the motor 
+presses against a load, pressure is continuously applied to the load.
+	
+z Usage example
+Setting of operation data
+	
+Operation image
+	
+500
+0
+2,000
+Speed
+Position
+500
+ON
+OFF
+2,000
+Speed
+Time
+0
+START
+Operation method
+1.	 Check that the READY output is ON.
+2.	 Select the operation data number using the M0 to M7 inputs and turn the START input ON. 
+The READY output is turned OFF, and the motor starts operation.
+3.	 Check that the READY output has been turned OFF and turn the START input OFF.
+4.	 Turn the STOP input ON. The motor stops immediately.
+5.	 When the motor stops, the READY output is turned ON.
+	
+	
+ON
+OFF
+ON
+OFF
+ON
+OFF
+READY output
+ON
+OFF
+STOP input
+M0 to M7 input
+START input
+Internal speed command
+1
+5
+2
+4
+3
+
+
+=== PAGE 85 ===
+Stored data (SD) operation
+2  Operation
+85
+3-6	
+Mode for link operation of operation data
+More than one operation data number are linked. If the base point for the link operation is changed using the M0 to 
+M7 inputs or the D-SEL0 to D-SEL7 inputs, link operation with multiple patterns can be set. It can be used when 
+setting a different operation pattern for each load.
+The timing to transit to the operation data number of the next data varies depending on the type of operation.
+	
+z In case of positioning SD operation or positioning push-motion SD operation
+	• When the command position has reached the target position
+	• When the NEXT input has been turned ON
+	• When the event jump function has been executed (_"Event jump function" on p.99)
+	
+z In case of continuous SD operation
+	• When the NEXT input has been turned ON
+	• When the event jump function has been executed (_"Event jump function" on p.99)
+Related operation data
+MEXE02 tree view
+Item
+Description
+Initial value
+Operation data
+Link
+Sets the mode for link operation.
+Setting range 
+0: No link 
+1: Manual sequential 
+2: Automatic sequential 
+3: Continuous sequential operation
+0
+Next data 
+number
+Sets the next data.
+Setting range 
+−256: Stop 
+−2: ↓↓(+2) 
+−1: ↓(+1) 
+0 to 255: Operation data number
+−1
+
+
+=== PAGE 86 ===
+Stored data (SD) operation
+2  Operation
+86
+	
+ No link (single-motion operation)
+Operation is executed once with one operation data number.
+Related I/O signals
+	
+START input
+M0 to M7 input
+MOVE output
+READY output
+IN-POS output
+SEQ-BSY output
+OPE-BSY output
+DELAY-BSY output
+CRNT output
+MBC output
+Drive-complete
+delay time
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+ON
+OFF
+Motor operation
+
+

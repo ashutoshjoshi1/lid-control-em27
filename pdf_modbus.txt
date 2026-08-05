@@ -1,0 +1,1193 @@
+﻿=== PAGE 285 ===
+Guidance
+5  Method of control via Modbus RTU (RS-485 communication)
+285
+STEP 2
+Set the switches
+Set the following with the switches of the driver. The status becomes as shown in the figures after setting.
+Setting contents
+Switch
+Protocol: Modbus protocol
+Turn No.2 of SW1 ON
+Address number: 1
+Turn No.1 of SW1 OFF, set ID to 1
+Transmission rate: 115,200 bps
+Set BAUD to 4
+Termination resistor: ON
+AC power input driver: Turn No.1 and No.2 of TERM ON 
+DC power input driver: Turn No.3 and No.4 of SW1 ON
+Function setting switch (SW1)
+Address number setting 
+switch (ID)
+Transmission rate setting 
+switch (BAUD)
+Function setting switch (SW1)
+No.3, No.4: 
+Termination resistor
+No.2: Protocol
+No.1: Address number
+No.2: Protocol
+No.1: Address number
+ AC power input driver
+ DC power input driver
+→ON
+→ON
+Address number setting 
+switch (ID)
+Transmission rate setting 
+switch (BAUD)
+Termination resistor setting switch 
+(TERM.)
+→ON
+No.2: ON
+No.1: ON
+STEP 3
+Turn on the power and set the communication parameters
+Check the following communication parameters with the MEXE02.
+If communication cannot be established, review the communication parameters of the driver.
+MEXE02 tree view
+Parameter name
+Communication & I/F
+	• Communication parity [Initial value: 1 (even parity)]
+	• Communication stop bit [Initial value: 0 (1 bit)]
+	• Transmission waiting time [Initial value: 30 (3.0 ms)]
+	• Silent interval [Initial value: 0 (automatic)]
+Set the transmission interval of frames sent from the client to be longer than the silent interval of the 
+driver. When the transmission rate is 115,200 bps, the silent interval of the driver is 2.5 ms.
+STEP 4
+Cycle the power
+The switches of the driver and the communication parameters are enabled after the power is cycled.
+
+
+=== PAGE 286 ===
+Guidance
+5  Method of control via Modbus RTU (RS-485 communication)
+286
+STEP 5
+Send a message and operate the motor
+As an example, here is a description how to execute the following positioning operation.
+	
+1.5 kHz/s
+1.5 kHz/s
+8,500 steps
+2,000 Hz
+500 Hz
+Speed
+Time
+1.	 Send the following five queries and set the operation data.
+Communication data (Hex)
+Description
+01 10 18 00 00 02 04 00 00 00 02 D8 6E
+Operation data No.0 operation type=2: Incremental positioning 
+(based on command position)
+01 10 18 02 00 02 04 00 00 21 34 C1 F1
+Operation data No.0 position=8,500 steps
+01 10 18 04 00 02 04 00 00 07 D0 5B F0
+Operation data No.0 speed=2,000 Hz
+01 10 18 06 00 02 04 00 00 05 DC DB 4C
+Operation data No.0 starting/changing speed rate=1.5 kHz/s
+01 10 18 08 00 02 04 00 00 05 DC 5A C0
+Operation data No.0 stopping deceleration=1.5 kHz/s
+2.	 Send the following two queries and execute operation.
+Communication data (Hex)
+Description
+01 10 00 7C 00 02 04 00 00 00 08 F5 18
+START input ON (operation No.0 operation start)
+01 10 00 7C 00 02 04 00 00 00 00 F4 DE
+START input OFF
+3.	 Confirm that the motor rotates without any problem.
+STEP 6
+Could you operate the motor?
+How did it go? Were you able to operate the motor properly? If the motor does not function, check the following 
+points:
+	• Is any alarm present?
+	• Are the power supply, motor and RS-485 communication cable connected securely?
+	• Are the server address, transmission rate and termination resistor set correctly?
+	• Is the C-DAT/C-ERR LED turned off? Or is it lit in red? (A communication error has occurred)
+
+
+=== PAGE 287 ===
+Setting of switches
+5  Method of control via Modbus RTU (RS-485 communication)
+287
+6	
+Setting of switches
+The figures show the status of factory setting.
+Be sure to turn off the driver power before setting the switches. If the switches are set while the 
+power is still on, the new setting will not become effective.
+	
+ AC power input driver
+Function setting switch (SW1)
+Address number 
+setting switch (ID)
+Transmission rate 
+setting switch (BAUD)
+No.2: Protocol
+No.1: Address number
+ Built-in controller type
+Termination resistor 
+setting switch (TERM.)
+ON
+ON
+ON
+ON
+Function setting switch (SW1)
+Address number 
+setting switch (ID)
+Transmission rate 
+setting switch (BAUD)
+No.2: Protocol
+No.1: Address number
+ Pulse input type with RS-485 communication 
+Termination resistor 
+setting switch (TERM.)
+	
+ DC power input driver
+Function setting switch (SW1)
+Function setting switch (SW1)
+Address number 
+setting switch (ID)
+Address number 
+setting switch (ID)
+Transmission rate 
+setting switch (BAUD)
+Transmission rate 
+setting switch (BAUD)
+No.3, No.4: 
+Termination resistor
+No.2: Protocol
+No.1: Address number
+No.3, No.4: 
+Termination resistor
+No.2: Protocol
+No.1: Address number
+ Built-in controller type
+ON
+ON
+ Pulse input type with RS-485 communication
+6-1	
+Protocol
+Turn No.2 of the SW1 switch ON. The Modbus protocol is selected.
+Factory setting
+	• Built-in controller type
+OFF
+	• Pulse input type with RS-485 communication
+ON
+SW1-No.2
+Protocol
+ON
+Modbus RTU
+OFF
+Connect to the network converter
+
+
+=== PAGE 288 ===
+Setting of switches
+5  Method of control via Modbus RTU (RS-485 communication)
+288
+6-2	
+Address number (server address)
+Set the address number (server address) using the ID switch and No.1 of the SW1 switch. Make sure each address 
+number (server address) you set for each driver is unique. Address number (server address) 0 is reserved for 
+broadcasting, so do not use this address.
+Factory setting
+	• Built-in controller type
+Address number 0 
+(ID switch: 0, No.1 of the SW1 switch: OFF)
+	• Pulse input type with RS-485 
+communication
+Address number 1 
+(ID switch: 1, No.1 of the SW1 switch: OFF)
+ID switch
+SW1-No.1
+Address 
+number
+ID switch
+SW1-No.1
+Address 
+number
+0
+OFF
+Not used
+0
+ON
+16
+1
+1
+1
+17
+2
+2
+2
+18
+3
+3
+3
+19
+4
+4
+4
+20
+5
+5
+5
+21
+6
+6
+6
+22
+7
+7
+7
+23
+8
+8
+8
+24
+9
+9
+9
+25
+A
+10
+A
+26
+B
+11
+B
+27
+C
+12
+C
+28
+D
+13
+D
+29
+E
+14
+E
+30
+F
+15
+F
+31
+Address number (server address) 0 is reserved for broadcasting, so do not set this address.
+6-3	
+Transmission rate
+Set the transmission rate of RS-485 communication with the BAUD switch.
+The transmission rate to be set should be the same as the transmission rate of the host controller.
+Factory setting
+	• Built-in controller type
+7 (115,200 bps)
+	• Pulse input type with RS-485 communication
+4 (115.200 bps)
+BAUD switch
+Transmission rate (bps)
+BAUD switch
+Transmission rate (bps)
+0
+9,600
+5
+230,400
+1
+19,200
+6
+Not used
+2
+38,400
+7
+115,200
+3
+57,600
+8 to F
+Not used
+4
+115,200
+	• When using the BAUD switch, do not set it to positions 6 or 8 through F.
+	• Setting the BAUD switch to “7” will enable the default function. (Default function _ p.291)
+	• Do not use position 7 when setting with the parameters.
+
+
+=== PAGE 289 ===
+Setting of switches
+5  Method of control via Modbus RTU (RS-485 communication)
+289
+6-4	
+Termination resistor
+For the driver that is most distant from the host controller (termination), set the termination register (120 Ω) of RS-485 
+communication.
+For the AC power input driver, turn both No.1 and No. 2 of the TERM switch ON.
+For the DC power input driver, turn both No. 3 and No. 4 of the SW1 switch ON.
+Factory setting
+	• Built-in controller type
+OFF
+	• Pulse input type with RS-485 communication
+OFF
+No.1 and No.2 of the TERM switch 
+or 
+No.3 and No.4 of the SW1 switch
+Termination resistor 
+(120 Ω)
+Both are OFF
+Disabled
+Both are ON
+Enabled
+If only one of the two switches is turned ON, a communication error may occur.
+	
+ CN6/CN7 pin assignment
+Pin No.
+Signal name
+Description
+1
+NC
+Not used
+2
+GND
+GND
+3
+TR+
+RS-485 communication signal (+)
+4
+NC
+Not used
+5
+NC
+Not used
+6
+TR−
+RS-485 communication signal (−)
+7
+NC
+Not used
+8
+NC
+Not used
+	
+ Internal input circuit
+2 GND
+3 TR+
+6 TR-
+2 GND
+3 TR+
+6 TR-
+120 Ω
+1 kΩ
+1 kΩ
+5 V
+0 V
+0 V
+TERM.
+No.2
+TERM.
+No.1
+2 GND
+3 TR+
+6 TR-
+2 GND
+3 TR+
+6 TR-
+120 Ω
+1 kΩ
+1 kΩ
+5 V
+0 V
+0 V
+SW1
+No.3
+SW1
+No.4
+ AC power input driver
+ DC power input driver
+
+
+=== PAGE 290 ===
+Setting of RS-485 communication
+5  Method of control via Modbus RTU (RS-485 communication)
+290
+7	
+Setting of RS-485 communication
+Set parameters required for RS-485 communication before performing communication.
+7-1	
+Parameters updated when turning on the power
+These are parameters related to sending/receiving via RS-485 communication. Set these parameters using the 
+MEXE02.
+	• They are out of the range of configuration.
+	• They are not initialized even if the maintenance command "Batch data initialization" is executed.
+	• They are initialized if the maintenance command "All data batch initialization" is executed. When the power is 
+cycled after execution of "All data batch initialization," the communication setting may be changed, disabling 
+communication.
+	• When "Return to factory setting" of the MEXE02 is executed, they are initialized.
+MEXE02 tree view
+Parameter name
+Description
+Initial value
+Communication & I/F
+RS485-I/F mode 
+selection
+Sets the protocol of RS-485 communication.
+Setting range 
+−1: Disable 
+0: The switch setting of the driver is followed 
+1: Network converter (NETC) 
+2: Modbus RTU mode
+0
+Server address 
+(Modbus)
+Sets the address number (server address).
+Setting range 
+−1: The switch setting of the driver is followed 
+1 to 31: Address number (server address) 1 to  
+	
+31 (0 is not used)
+−1
+Baudrate (Modbus)
+Sets the transmission rate.
+Setting range 
+−1: Follow the switch setting of the driver 
+0: 9,600 bps 
+1: 19,200 bps 
+2: 38,400 bps 
+3: 57,600 bps 
+4: 115,200 bps 
+5: 230,400 bps
+−1
+Byte & word order 
+(Modbus)
+Sets the byte order of 32-bit data. Set it when 
+the arrangement of the communication data is 
+different from that of the host controller.  
+(Setting example_p.291)
+Setting range 
+0: Even Address-High Word & Big-Endian 
+1: Even Address-Low Word & Big-Endian 
+2: Even Address-High Word & Little-Endian 
+3: Even Address-Low Word & Little-Endian
+0
+Communication parity 
+(Modbus)
+Setting range 
+0: None 
+1: Even parity 
+2: Odd parity
+1
+Communication stop bit 
+(Modbus)
+Setting range 
+0: 1 bit 
+1: 2 bits
+0
+Transmission waiting 
+time (Modbus)
+Sets the transmission waiting time of RS-485 
+communication.
+Setting range 
+0 to 10,000 (1=0.1 ms)
+30
+Silent interval (Modbus)
+Setting range 
+0: Set automatically 
+1 to 100 (1=0.1 ms)
+0
+
+
+=== PAGE 291 ===
+Setting of RS-485 communication
+5  Method of control via Modbus RTU (RS-485 communication)
+291
+	
+ Setting example of the "Byte & word order (Modbus)" parameter
+When 32-bit data "12345678h" is stored at the register addresses 1000h and 1001h, arrangement is changed as 
+follows depending on the setting of parameters.
+Setting of parameters
+1000h (even address)
+1001h (odd address)
+Upper
+Lower
+Upper
+Lower
+0: Even Address-High Word & Big-Endian
+12h
+34h
+56h
+78h
+1: Even Address-Low Word & Big-Endian
+56h
+78h
+12h
+34h
+2: Even Address-High Word & Little-Endian
+34h
+12h
+78h
+56h
+3: Even Address-Low Word & Little-Endian
+78h
+56h
+34h
+12h
+The description in this document is based on "Even Address-High Word & Big-Endian."
+7-2	
+Parameters updated immediately after rewriting
+Set the following parameters using the MEXE02 or via RS-485 communication.
+MEXE02 tree view
+Parameter name
+Description
+Initial value
+Communication & I/F
+Communication 
+timeout (Modbus)
+Sets the condition under which a communication 
+timeout occurs in RS-485 communication.
+Setting range 
+0: Not monitored 
+1 to 10,000 ms
+0
+Communication 
+error detection 
+(Modbus)
+When the RS-485 communication error has 
+occurred for the set number of times, an alarm of 
+RS-485 communication error is generated.
+Setting range 
+1 to 10 times
+3
+Server error 
+response mode 
+(Modbus)
+Setting range 
+0: Even if a server error occurs, a normal response  
+	 is returned 
+1: When a server error occurs, an exception  
+	 response is returned
+1
+Test mode timeout 
+(Modbus)
+This parameter is a reserved function. Not possible 
+to use.
+300
+7-3	
+Forcible return of parameters to initial values (default function)
+Return some parameters related to RS-485 communication to their initial values.
+1.	 Turn No.2 of the SW1 switch ON.
+The Modbus protocol is selected.
+2.	 Set the BAUD switch to "7."
+The default function is enabled, and the following parameters are returned to their initial values.
+MEXE02 tree view
+Parameter name
+Initial value
+Communication & I/F
+Baudrate (Modbus)
+−1: The switch setting of the driver is followed
+Byte & word order (Modbus)
+0: Even Address-High Word & Big-Endian
+Communication parity (Modbus)
+1: Even parity
+Communication stop bit (Modbus)
+0: 1 bit
+Transmission waiting time 
+(Modbus)
+30 (3 ms)
+Silent interval (Modbus)
+0: Set automatically
+
+
+=== PAGE 292 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+292
+8	
+Example of data setting in Modbus RTU  
+mode
+8-1	
+Remote I/O command
+These are commands related to remote I/O. The set values are stored in RAM.
+Register address
+Name
+Description
+Initial 
+value
+R/W
+Upper
+Lower
+114 
+(0072h)
+115 
+(0073h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command (2nd)."
+−1
+R/W
+116 
+(0074h)
+117 
+(0075h)
+Driver input 
+command (2nd)
+The input command same as "Driver input command 
+(reference)" is set automatically.
+0
+R/W
+118 
+(0076h)
+119 
+(0077h)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command 
+(automatic OFF)."
+−1
+R/W
+120 
+(0078h)
+121 
+(0079h)
+Driver input 
+command 
+(automatic OFF)
+The input command same as "Driver input command 
+(reference)" is set automatically. When the input signal is 
+turned ON with this command, it is turned OFF 
+automatically after 250 µs.
+0
+R/W
+122 
+(007Ah)
+123 
+(007Bh)
+NET selection 
+number
+Selects the operation data number. Operation data can be 
+sent at the same time as "Driver input command 
+(reference)."
+−1
+R/W
+124 
+(007Ch)
+125 
+(007Dh)
+Driver input 
+command 
+(reference)
+Sets the input command to the driver.  
+(Details of bit arrangement _ Next paragraph)
+0
+R/W
+126 
+(007Eh)
+127 
+(007Fh)
+Driver output status
+Acquires the output status of the driver.  
+(Details of bit arrangement _p.293)
+−
+R
+	
+ Driver input command
+These are the driver input signals that can be accessed via Modbus communication. They can be accessed by one 
+register (16 bits).
+	
+z Upper
+Register 
+address
+Description
+124 
+(007Ch)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+−
+−
+−
+−
+−
+−
+−
+−
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+−
+−
+−
+−
+−
+−
+−
+−
+	
+z Lower
+Register 
+address
+Description *
+125 
+(007Dh)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+R-IN15 
+[RV-POS]
+R-IN14 
+[FW-POS]
+R-IN13 
+[RV-JOG-P]
+R-IN12 
+[FW-JOG-P]
+R-IN11 
+[SSTART]
+R-IN10 
+[D-SEL2]
+R-IN9 
+[D-SEL1]
+R-IN8 
+[D-SEL0]
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-IN7 
+[ALM-RST]
+R-IN6 
+[FREE]
+R-IN5 
+[STOP]
+R-IN4 
+[ZHOME]
+R-IN3 
+[START]
+R-IN2 
+[M2]
+R-IN1 
+[M1]
+R-IN0 
+[M0]
+	* [  ]: Initial value
+
+
+=== PAGE 293 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+293
+	
+ Driver output status
+These are the driver output signals that can be accessed via Modbus communication. They can be accessed by one 
+register (16 bits).
+	
+z Upper
+Register 
+address
+Description
+126 
+(007Eh)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+−
+−
+−
+−
+−
+−
+−
+−
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+−
+−
+−
+−
+−
+−
+−
+−
+	
+z Lower
+Register 
+address
+Description *
+127 
+(007Fh)
+Bit15
+Bit14
+Bit13
+Bit12
+Bit11
+Bit10
+Bit9
+Bit8
+R-OUT15 
+[TLC]
+R-OUT14 
+[IN-POS]
+R-OUT13 
+[MOVE]
+R-OUT12 
+[TIM]
+R-OUT11 
+[AREA2]
+R-OUT10 
+[AREA1]
+R-OUT9 
+[AREA0]
+R-OUT8 
+[SYS-BSY]
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-OUT7 
+[ALM-A]
+R-OUT6 
+[INFO]
+R-OUT5 
+[READY]
+R-OUT4 
+[HOME-END
+R-OUT3 
+[START_R]
+R-OUT2 
+[M2_R]
+R-OUT1 
+[M1_R]
+R-OUT0 
+[M0_R]
+	* [  ]: Initial value
+
+
+=== PAGE 294 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+294
+8-2	
+Positioning operation
+As an example, here is a description how to execute the following positioning operation.
+	
+z Setting example
+	• Address number (server address): 1
+	• Operation data number: 0
+	• Position (travel amount): 1,000 steps
+	• Operating speed: 5,000 Hz
+	
+z Operation procedure
+1.	 Send the following query and set the position (travel amount) of the operation data No.0 to 1,000 steps and the 
+operating speed to 5,000 Hz.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+10h
+Writing to multiple holding registers
+Data
+Register address (upper)
+18h
+Register address to start writing from 
+=Position No.0 (1802h)
+Register address (lower)
+02h
+Number of registers (upper)
+00h
+Number of registers to be written from the 
+starting register address (4 registers=0004h)
+Number of registers (lower)
+04h
+Number of bytes
+08h
+Twice the number of registers in the query=8
+Value write to register address (upper)
+00h
+Value written to register address 1802h 
+=Position (travel amount) 1,000 steps  
+(0000 03E8h)
+Value write to register address (lower)
+00h
+Value write to register address + 1 (upper)
+03h
+Value write to register address + 1 (lower)
+E8h
+Value write to register address + 2 (upper)
+00h
+Value written to register address 1804h 
+=Operating speed 5,000 Hz (0000 1388h)
+Value write to register address + 2 (lower)
+00h
+Value write to register address + 3 (upper)
+13h
+Value write to register address + 3 (lower)
+88h
+Error check (lower)
+03h
+Calculation result of CRC-16
+Error check (upper)
+17h
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+10h
+Same as query
+Data
+Register address (upper)
+18h
+Same as query
+Register address (lower)
+02h
+Number of registers (upper)
+00h
+Same as query
+Number of registers (lower)
+04h
+Error check (lower)
+66h
+Calculation result of CRC-16
+Error check (upper)
+AAh
+
+
+=== PAGE 295 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+295
+2.	 Send the following query and turn START ON. Positioning operation is started.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Value written to the register address 
+=START ON (0008h) *
+Value write (lower)
+08h
+Error check (lower)
+18h
+Calculation result of CRC-16
+Error check (upper)
+14h
+	* START is assigned to bit3 of the driver input command (007Dh) in initial setting.  
+(1,000 in a binary number=0008h in a hexadecimal number)
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Same as query
+Value write (lower)
+08h
+Error check (lower)
+18h
+Calculation result of CRC-16
+Error check (upper)
+14h
+3.	 When positioning operation is completed, send the following query and turn START OFF again.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+06h
+Writing to a holding register
+Data
+Register address (upper)
+00h
+Register address to which writing is executed 
+=Driver input command (007Dh)
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Value written to the register address 
+=START OFF (0000h)
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+06h
+Same as query
+Data
+Register address (upper)
+00h
+Same as query
+Register address (lower)
+7Dh
+Value write (upper)
+00h
+Same as query
+Value write (lower)
+00h
+Error check (lower)
+19h
+Calculation result of CRC-16
+Error check (upper)
+D2h
+
+
+=== PAGE 296 ===
+Example of data setting in Modbus RTU mode
+5  Method of control via Modbus RTU (RS-485 communication)
+296
+8-3	
+Continuous operation
+As an example, here is a description how to execute the following continuous operation.
+	
+z Setting example
+	• Address number (server address): 1
+	• Operation data number: 0
+	• Rotation direction: Forward direction
+	• Operating speed: 5,000 Hz
+	
+z Operation procedure
+1.	 Send the following query and set the operating speed of the operation data No.0 to 5,000 Hz.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+10h
+Writing to multiple holding registers
+Data
+Register address (upper)
+04h
+Register address to start writing from 
+=Operating speed No.0 (0480h)
+Register address (lower)
+80h
+Number of registers (upper)
+00h
+Number of registers to be written from the 
+starting register address (2 registers=0002h)
+Number of registers (lower)
+02h
+Number of bytes
+04h
+Twice the number of registers in the query=4
+Value write to register address (upper)
+00h
+Value written to register address 0480h 
+=Operating speed 5,000 Hz (0000 1388h)
+Value write to register address (lower)
+00h
+Value write to register address + 1 (upper)
+13h
+Value write to register address + 1 (lower)
+88h
+Error check (lower)
+C4h
+Calculation result of CRC-16
+Error check (upper)
+59h
+Response
+Field name
+Data
+Description
+Server address
+01h
+Same as query
+Function code
+10h
+Same as query
+Data
+Register address (upper)
+04h
+Same as query
+Register address (lower)
+80h
+Number of registers (upper)
+00h
+Same as query
+Number of registers (lower)
+02h
+Error check (lower)
+41h
+Calculation result of CRC-16
+Error check (upper)
+10h
+
+

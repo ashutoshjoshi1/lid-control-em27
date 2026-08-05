@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import PyPDF2; r=PyPDF2.PdfReader\\('HM-60262-11E.pdf'\\); print\\(len\\(r.pages\\), 'pages'\\)\")",
+      "Bash(python -c \"import fitz; doc=fitz.open\\('HM-60262-11E.pdf'\\); print\\(len\\(doc\\),'pages'\\)\")"
+    ]
+  }
+}

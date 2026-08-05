@@ -1,0 +1,90 @@
+
+Now I have a very clear picture. Let me also check the specific register addresses for the NET selection number to understand the full flow:Now I have all the information I need. Let me put together a clear, complete answer:Now I have everything I need to give a comprehensive answer. Here's the complete picture:
+
+The key insight is: **you use the NET selection number register (0x0072/0x0073) to select the operation number, then fire START via the Driver input command register (0x007C/0x007D)**. You do NOT need to rewrite any of the operation's settings.
+
+Here's the full explanation:
+
+---
+
+## Running a Preprogrammed Operation by Number via Modbus
+
+Yes, you can absolutely do this — you just need two Modbus writes, no need to resend the stored settings. The manual calls this the **NET selection number** method.
+
+### How it works
+
+There are three ways the driver picks which operation data number to run. In priority order:
+
+1. **NET selection number** — set via Modbus register (highest priority)
+2. Direct selection (D-SEL inputs)
+3. M0–M7 binary inputs
+
+Since NET selection has the highest priority, writing a value of 0–255 to that register overrides whatever M0–M7 say. Writing −1 (0xFFFF) disables it and falls back to the lower priority methods.
+
+---
+
+### The two-step Modbus procedure
+
+**Step 1 — Write the operation number to the NET selection number register:**
+
+| Register | Address | What to write |
+|---|---|---|
+| Upper | `0x0072` | `0x00` |
+| Lower | `0x0073` | operation number (e.g., `0x02` for operation 2) |
+
+Use Modbus function code `0x06` (write single register) on the **lower** register `0x0073`, or `0x10` (write multiple registers) to write both at once starting at `0x0072`.
+
+**Step 2 — Turn START ON via the Driver input command register:**
+
+| Register | Address | What to write |
+|---|---|---|
+| Upper | `0x007C` | `0x00` |
+| Lower | `0x007D` | `0x0008` (bit 3 = START) |
+
+Then turn START back OFF by writing `0x0000` to `0x007D`.
+
+---
+
+### Example: jump to operation 2
+
+```
+# Write operation number 2 to NET selection number (registers 0x0072/0x0073)
+01 06 00 73 00 02 [CRC]     ← writes 0x0002 to lower register (operation No.2)
+
+# Turn START ON (register 0x007D, bit3 = START = 0x0008)
+01 06 00 7D 00 08 [CRC]
+
+# Turn START OFF once motion begins
+01 06 00 7D 00 00 [CRC]
+```
+
+---
+
+### Example: jump to operation 3
+
+```
+# Write 3 to NET selection number
+01 06 00 73 00 03 [CRC]
+
+# START ON
+01 06 00 7D 00 08 [CRC]
+
+# START OFF
+01 06 00 7D 00 00 [CRC]
+```
+
+---
+
+### One-shot shortcut (optional)
+
+The manual also describes a shortcut using register pair `0x0072/0x0073` (NET selection number) **together with** `0x0074/0x0075` (Driver input command 2nd). When you write the operation number to `0x0072/0x0073`, you can simultaneously send the START bit through `0x0074/0x0075` using a single multi-register write (`0x10`). The bit layout of `0x0075` is identical to `0x007D` (bit 3 = START). This lets you select and trigger in **one Modbus frame**.
+
+---
+
+### Key things to know
+
+- Writing any value **0–255** to the NET selection register activates it. Writing **−1 (0xFFFF)** disables it and falls back to M0–M7.
+- You can monitor the **Present selected data number** at registers `0x00C2/0x00C3` to confirm which operation is currently selected.
+- You can monitor **Present operation data number** at `0x00C4/0x00C5` to see which one is actually running.
+- The READY output (bit 2 of register `0x007F`) goes OFF when motion starts. Wait for it to go back ON when done.
+- Your stored settings (position, speed, acceleration, etc.) are untouched — the driver just executes whatever is already programmed for that operation number.

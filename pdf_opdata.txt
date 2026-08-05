@@ -1,0 +1,1312 @@
+﻿=== PAGE 305 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+305
+	
+ Setting example
+The following is an example of sending/receiving of data to/from the address number 1 using indirect reference.
+	
+z STEP 1: Registration in indirect reference addresses
+Set data
+Indirect reference 
+address
+Register address
+Data to be sent
+ID
+Upper
+Lower
+Indirect reference 
+address setting (0)
+1300h
+1301h
+
+Position of 
+operation data No.1
+C21h 
+(Half value of register address 1842h)
+Indirect reference 
+address setting (1)
+1302h
+1303h
+
+Stopping 
+deceleration of 
+operation data No.2
+C44h 
+(Half value of register address 1888h)
+Indirect reference 
+address setting (2)
+1304h
+1305h
+
+Operating speed of 
+operation data No.3
+C62h 
+(Half value of register address 18C4h)
+Send the following query and register the ID of the data to be sent in the indirect reference addresses.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+10h
+Writing to multiple holding registers
+Data
+Register address (upper)
+13h
+Register address to start writing from 
+=Indirect reference address setting (0) (1300h)
+Register address (lower)
+00h
+Number of registers (upper)
+00h
+Number of registers to be written from the 
+starting register address=6 registers (0006h)
+Number of registers (lower)
+06h
+Number of bytes
+0Ch
+Twice the number of registers in the query=12
+Value write to register address (upper)
+00h
+Value written to register address 1300h 
+=ID of operation data No.1 position (C21h)
+Value write to register address (lower)
+00h
+Value write to register address + 1 (upper)
+0Ch
+Value write to register address + 1 (lower)
+21h
+Value write to register address + 2 (upper)
+00h
+Value written to register address 1302h 
+=ID of operation data No.2 stopping 
+deceleration (C44h)
+Value write to register address + 2 (lower)
+00h
+Value write to register address + 3 (upper)
+0Ch
+Value write to register address + 3 (lower)
+44h
+Value write to register address + 4 (upper)
+00h
+Value written to r
+
+=== PAGE 306 ===
+Data setting method
+5  Method of control via Modbus RTU (RS-485 communication)
+306
+	
+z STEP 2: Writing to indirect reference areas
+Set data
+Indirect reference area
+Register address
+Data to be sent
+Setting value
+Upper
+Lower
+Indirect reference area 0
+1340h
+1341h
+
+Position of operation data No.1
+1,500 (5DCh)
+Indirect reference area 1
+1342h
+1343h
+
+Stopping deceleration of 
+operation data No.2
+770,000 (BBFD0h)
+Indirect reference area 2
+1344h
+1345h
+
+Operating speed of operation 
+data No.3
+4,500 (1194h)
+Send the following query and write the set values of the data to be sent in the indirect reference areas.
+Query
+Field name
+Data
+Description
+Server address
+01h
+Server address 1
+Function code
+10h
+Writing to multiple holding registers
+Data
+Register address (upper)
+13h
+Register address to start writing from 
+=Indirect reference area 0 (1340h)
+Register address (lower)
+40h
+Number of registers (upper)
+00h
+Number of registers to be written from the starting 
+register address=6 registers (0006h)
+Number of registers (lower)
+06h
+Number of bytes
+0Ch
+Twice the number of registers in the query=12
+Value write to register address (upper)
+00h
+Value written to register address 1340h 
+=Operation data No.1 position 1,500 (5DCh)
+Value write to register address (lower)
+00h
+Value write to register address + 1 
+(upper)
+05h
+Value write to register address + 1 
+(lower)
+DCh
+Value write to register address + 2 
+(upper)
+00h
+Value written to register address 1342h 
+=Operation data No.2 stopping deceleration 
+770,000 (BBFD0h)
+Value write to register address + 2 
+(lower)
+0Bh
+Value write to register address + 3 
+(upper)
+BFh
+Value write to register address + 3 
+(lower)
+D0h
+Value write to register address + 4 
+(upper)
+00h
+Value written to register address 1344h 
+=Operation data No.3 operating speed 4,500 
+(1194h)
+Value write to register address + 4 
+(lower)
+00h
+Value write to register address + 5 
+(upper)
+11h
+Value write to register address + 5 
+(lower)
+94h
+Error check (lower)
+72h
+Calculation result of CR
+
+=== PAGE 313 ===
+Direct data operation
+5  Method of control via Modbus RTU (RS-485 communication)
+313
+10-3	
+Commands required for direct data operation
+Related commands
+Register address
+Name
+Description
+Initial value
+Upper
+Lower
+88 
+(0058h)
+89 
+(0059h)
+Direct data operation 
+operation data number
+The contents of the set operation data number are 
+transferred to each command of direct data 
+operation. Refer to p.314 for information on the 
+time that will be transferred.
+Setting range 
+0 to 255: Operation data No.
+0*1
+90 
+(005Ah)
+91 
+(005Bh)
+Direct data operation 
+operation type
+Sets the operation type for direct data operation.
+Setting range 
+0: No setting 
+1: Absolute positioning 
+2: Incremental positioning  
+	 (based on command position) 
+3: Incremental positioning  
+	 (based on feedback position) 
+7: Continuous operation (position control) 
+8: Wrap absolute positioning 
+9: Wrap proximity positioning 
+10: Wrap absolute positioning (FWD) 
+11: Wrap absolute positioning (RVS) 
+12: Wrap absolute push-motion 
+13: Wrap proximity push-motion 
+14: Wrap push-motion (FWD) 
+15: Wrap push-motion (RVS) 
+16: Continuous operation (speed control) 
+17: Continuous operation (push motion) 
+18: Continuous operation (torque control) 
+20: Absolute push-motion 
+21: Incremental push-motion  
+	 	 (based on command position) 
+22: Incremental push-motion  
+	 	 (based on feedback position)
+2*2
+92 
+(005Ch)
+93 
+(005Dh)
+Direct data operation 
+position
+Sets the target position for direct data operation.
+Setting range 
+−2,147,483,648 to 2,147,483,647 steps
+0*2
+94 
+(005Eh)
+95 
+(005Fh)
+Direct data operation 
+operating speed
+Sets the operating speed for direct data operation.
+Setting range 
+−4,000,000 to 4,000,000 Hz
+1,000*2
+96 
+(0060h)
+97 
+(0061h)
+Direct data operation 
+starting/changing 
+speed rate
+Sets the starting/changing rate or starting/
+changing time for direct data operation.
+Setting range 
+1 to 1,000,000,000 (1=0.001 kHz/s, 1=0.001 s, or 
+1=0.001 ms/kHz)
+1,000,000*2
+98 
+(0062h)
+99 
+(0063h)
+Direct data opera
+
+=== PAGE 345 ===
+Method of control via CC-Link communication
+6  Method of control via industrial network
+345
+STEP 5
+Change the position data of the operation data No.0
+1.	 Set the position data "3,000 (BB8h)" of the position No.0 to remote register.
+Since the WR-REQ is kept to the ON-state in the STEP 4, the write value is displayed at the same time the data of 
+the position No.0 is set.
+Master station to NETC02-CC
+Address number
+Address
+Input value
+Description
+0
+RWw100
+0
+Not used
+RWw101
+0
+Not used
+RWw102
+3,000 
+(BB8h)
+Position No.0 (lower)
+RWw103
+Position No.0 (upper)
+1
+RWw104
+0
+Not used
+RWw105
+0
+Not used
+RWw106
+3,000 
+(BB8h)
+Position No.0 (lower)
+RWw107
+Position No.0 (upper)
+Also, since the RD-REQ is kept to the ON-state in the STEP 3, the write value is read at the same time the data of 
+the position No.0 is set. 
+Check the value is matched with the one having set in the step 1.
+NETC02-CC to master station
+Address number
+Address
+Response
+Description
+0
+RWr0
+5,000 
+(1388h)
+Feedback position (lower)
+RWr1
+Feedback position (upper)
+RWr2
+3,000 
+(BB8h)
+Position No.0 (lower)
+RWr3
+Position No.0 (upper)
+1
+RWr4
+5,000 
+(1388h)
+Feedback position (lower)
+RWr5
+Feedback position (upper)
+RWr6
+3,000 
+(BB8h)
+Position No.0 (lower)
+RWr7
+Position No.0 (upper)
+2.	 Turn the WR-REQ and RD-REQ OFF.
+Master station to NETC02-CC
+Address number
+Remote I/O
+Address
+Input value
+Description
+0
+WR-REQ0
+RY1090
+0
+Write completed
+1
+0
+RD-REQ0
+RY1092
+0
+Read and monitor completed
+1
+
+
+=== PAGE 350 ===
+Method of control via EtherCAT communication
+6  Method of control via industrial network
+350
+	• For the address number, set the one with the "Connection (axis #)" parameter of the NETC01-ECT 
+set to "Enable."
+	• For the AZ Series, the transmission rate does not require to set. It is fixed to 625,000 bps in the 
+"Baudrate (NETC)" parameter. The BAUD switch can point anywhere.
+STEP 4
+Cycle the power and check the LED
+Check that the LED of the driver and NETC01-ECT are as shown in the figures.
+ Network converter
+Green lit
+Green lit
+OFF
+OFF
+Green lit
+OFF
+Green blinking
+ AC power input driver
+ DC power input driver
+Green lit
+Green lit
+	• When the C-DAT/C-ERR LED (red) of the driver or the C-ERR LED (red) of the NETC01-ECT is lit:  
+Check the transmission rate of RS-485 communication or the address number.
+	• When the ERR LED (red) of the NETC01-ECT is blink: An EtherCAT communication error has been occurred. Check 
+the error content.
+STEP 5
+Perform continuous operation via remote I/O of EtherCAT communication
+Turn FW-POS of the address number 0 ON with the remote I/O of EtherCAT communication. Continuous operation for 
+the operation data No.0 is started at the 1,000 Hz of starting speed. Initial values of the remote I/O are as follows.
+	
+z MainDevice to NETC01-ECT
+CoE Index
+Sub-
+index
+Name
+Type
+Access
+Description
+2600h
+0
+−
+U8
+R
+Number of Sub-index: 2
+1
+I/O 
+Command 
+(lower)
+U8
+RW
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-IN7
+R-IN6
+R-IN5
+R-IN4
+R-IN3
+R-IN2
+R-IN1
+R-IN0
+ALM-RST
+FREE
+STOP
+ZHOME
+START
+M2
+M1
+M0
+2
+I/O 
+Command 
+(upper)
+U8
+RW
+Bit7
+Bit6
+Bit5
+Bit4
+Bit3
+Bit2
+Bit1
+Bit0
+R-IN15
+R-IN14
+R-IN13
+R-IN12
+R-IN11
+R-IN10
+R-IN9
+R-IN8
+RV-POS
+FW-POS
+RV-JOG-P
+FW-JOG-P
+SSTART
+D-SEL2
+D-SEL1
+D-SEL0
+STEP 6
+Were you able to operate the motor properly?
+How did it go? Were you able to operate the motor properly? If the motor does not function, check the following 
+points:
+	• Is an alarm generated in the driver or NETC01-ECT?
+	• Are the power supply, motor, and RS-485 communication cabl
+
+=== PAGE 387 ===
+Overview of operation data R/W command address arrangement
+7  Address/code lists
+387
+9	
+Overview of operation data R/W  
+command address arrangement
+With the operation data R/W commands, operation data is set.
+There are two methods to set the operation data: "direct reference" and "offset reference." The stored areas are the 
+same even if the addresses are different. Use them respectively in accordance with your purpose.
+Is the AZ Series used 
+for replacement for 
+the existing product?
+(Example:  AR Series)
+Yes
+Modbus 
+communication
+Oﬀset reference
+Direct reference
+65 or more
+Not possible to set
+64 or less
+No
+Industrial network
+What is the 
+type of the 
+network?
+What is the 
+input method 
+of operation 
+data?
+How many 
+operation data 
+pieces are set?
+Oﬀset reference
+(Industrial 
+network)
+Oﬀset reference
+(Modbus 
+communication)
+Direct reference 
+(compatible)
+START
+Direct reference
+(Modbus 
+communication)
+Ref._p.394
+Ref._p.394
+Ref._p.389
+Ref._p.401
+
+
+=== PAGE 388 ===
+Overview of operation data R/W command address arrangement
+7  Address/code lists
+388
+9-1	
+Overview of direct reference
+Direct reference is a method in which the register address (base address) of the base operation data number is 
+specified to input data.
+Use direct reference in Modbus communication. (Details of addresses _p.389)
+	
+No.7
+Base data number
+Data No.7
+Base address
+9-2	
+Overview of offset reference
+Offset reference is a method in which the operation data number of the starting point (starting data number) is set 
+and the offset from the starting data number is specified to input data. The starting data number is set with the "DATA 
+offset reference origin" parameter.
+Offset reference can be used both in Modbus communication and industrial network.  
+(Details of addresses _p.394)
+	
+No.5
+＋
+Starting data number
+2
+Oﬀset amount
+Data No.7
+Base address
+	• Up to 32 pieces of operation data can be specified in offset reference. (The offset value is up to 31)
+	• The set value of the "DATA offset reference origin" parameter is stored in RAM.
+9-3	
+Overview of direct reference (compatible)
+This is a convenient input method to replace our existing product with the AZ Series.
+It includes addresses grouped by setting items such as type, position, and operating speed. Since the addresses, etc. 
+are the same as those of the existing product, it can be used without special setting. (Details of addresses _p.401)
+	• Up to 64 operation data can be set (operation data No. 0 to 63). The operation data No.64 and later 
+cannot be set (65 data pieces or more).
+	• Settable items are the following six types. Other items such as link and loop cannot be set.  
+Type, position, operating speed, starting/changing rate, stop, operating current
+	
+Type
+Operation data No.0 to operation data No.63 *2
+Position
+Operation data No.0 to operation data No.63 *2
+Operating current
+Operation data No.0 to operation data No.63 *2
+•
+•
+•
+ *1
+*1	Drive-complete delay time, link, area, loop, and event cannot 
+
+=== PAGE 389 ===
+Operation data R/W commands
+7  Address/code lists
+389
+10	
+Operation data R/W commands
+This is a method in which input is made by operation data number. To input all the setting items included in operation 
+data in succession, use the following addresses.
+10-1	
+Direct reference (Modbus communication)
+Direct reference is a method in which the register address (base address) of the base operation data number is 
+specified to input data.
+	
+ Base address of each operation data number
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Dec
+Hex
+Dec
+Hex
+Dec
+Hex
+6144
+1800
+No.0
+8128
+1FC0
+No.31
+10112
+2780
+No.62
+6208
+1840
+No.1
+8192
+2000
+No.32
+10176
+27C0
+No.63
+6272
+1880
+No.2
+8256
+2040
+No.33
+10240
+2800
+No.64
+6336
+18C0
+No.3
+8320
+2080
+No.34
+10304
+2840
+No.65
+6400
+1900
+No.4
+8384
+20C0
+No.35
+10368
+2880
+No.66
+6464
+1940
+No.5
+8448
+2100
+No.36
+10432
+28C0
+No.67
+6528
+1980
+No.6
+8512
+2140
+No.37
+10496
+2900
+No.68
+6592
+19C0
+No.7
+8576
+2180
+No.38
+10560
+2940
+No.69
+6656
+1A00
+No.8
+8640
+21C0
+No.39
+10624
+2980
+No.70
+6720
+1A40
+No.9
+8704
+2200
+No.40
+10688
+29C0
+No.71
+6784
+1A80
+No.10
+8768
+2240
+No.41
+10752
+2A00
+No.72
+6848
+1AC0
+No.11
+8832
+2280
+No.42
+10816
+2A40
+No.73
+6912
+1B00
+No.12
+8896
+22C0
+No.43
+10880
+2A80
+No.74
+6976
+1B40
+No.13
+8960
+2300
+No.44
+10944
+2AC0
+No.75
+7040
+1B80
+No.14
+9024
+2340
+No.45
+11008
+2B00
+No.76
+7104
+1BC0
+No.15
+9088
+2380
+No.46
+11072
+2B40
+No.77
+7168
+1C00
+No.16
+9152
+23C0
+No.47
+11136
+2B80
+No.78
+7232
+1C40
+No.17
+9216
+2400
+No.48
+11200
+2BC0
+No.79
+7296
+1C80
+No.18
+9280
+2440
+No.49
+11264
+2C00
+No.80
+7360
+1CC0
+No.19
+9344
+2480
+No.50
+11328
+2C40
+No.81
+7424
+1D00
+No.20
+9408
+24C0
+No.51
+11392
+2C80
+No.82
+7488
+1D40
+No.21
+9472
+2500
+No.52
+11456
+2CC0
+No.83
+7552
+1D80
+No.22
+9536
+2540
+No.53
+11520
+2D00
+No.84
+7616
+1DC0
+No.23
+9600
+2580
+No.54
+11584
+2D40
+No.85
+7680
+1E00
+No.24
+9664
+25C0
+No.55
+11648
+2D80
+No.86
+7744
+1E40
+No.25
+9728
+2600
+No.56
+11712
+2DC0
+No.87
+7808
+1E80
+No.26
+9792
+2640
+No.57
+11776
+2E00
+No.88
+7872
+1EC0
+
+
+=== PAGE 390 ===
+Operation data R/W commands
+7  Address/code lists
+390
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Dec
+Hex
+Dec
+Hex
+Dec
+Hex
+12096
+2F40
+No.93
+14976
+3A80
+No.138
+17856
+45C0
+No.183
+12160
+2F80
+No.94
+15040
+3AC0
+No.139
+17920
+4600
+No.184
+12224
+2FC0
+No.95
+15104
+3B00
+No.140
+17984
+4640
+No.185
+12288
+3000
+No.96
+15168
+3B40
+No.141
+18048
+4680
+No.186
+12352
+3040
+No.97
+15232
+3B80
+No.142
+18112
+46C0
+No.187
+12416
+3080
+No.98
+15296
+3BC0
+No.143
+18176
+4700
+No.188
+12480
+30C0
+No.99
+15360
+3C00
+No.144
+18240
+4740
+No.189
+12544
+3100
+No.100
+15424
+3C40
+No.145
+18304
+4780
+No.190
+12608
+3140
+No.101
+15488
+3C80
+No.146
+18368
+47C0
+No.191
+12672
+3180
+No.102
+15552
+3CC0
+No.147
+18432
+4800
+No.192
+12736
+31C0
+No.103
+15616
+3D00
+No.148
+18496
+4840
+No.193
+12800
+3200
+No.104
+15680
+3D40
+No.149
+18560
+4880
+No.194
+12864
+3240
+No.105
+15744
+3D80
+No.150
+18624
+48C0
+No.195
+12928
+3280
+No.106
+15808
+3DC0
+No.151
+18688
+4900
+No.196
+12992
+32C0
+No.107
+15872
+3E00
+No.152
+18752
+4940
+No.197
+13056
+3300
+No.108
+15936
+3E40
+No.153
+18816
+4980
+No.198
+13120
+3340
+No.109
+16000
+3E80
+No.154
+18880
+49C0
+No.199
+13184
+3380
+No.110
+16064
+3EC0
+No.155
+18944
+4A00
+No.200
+13248
+33C0
+No.111
+16128
+3F00
+No.156
+19008
+4A40
+No.201
+13312
+3400
+No.112
+16192
+3F40
+No.157
+19072
+4A80
+No.202
+13376
+3440
+No.113
+16256
+3F80
+No.158
+19136
+4AC0
+No.203
+13440
+3480
+No.114
+16320
+3FC0
+No.159
+19200
+4B00
+No.204
+13504
+34C0
+No.115
+16384
+4000
+No.160
+19264
+4B40
+No.205
+13568
+3500
+No.116
+16448
+4040
+No.161
+19328
+4B80
+No.206
+13632
+3540
+No.117
+16512
+4080
+No.162
+19392
+4BC0
+No.207
+13696
+3580
+No.118
+16576
+40C0
+No.163
+19456
+4C00
+No.208
+13760
+35C0
+No.119
+16640
+4100
+No.164
+19520
+4C40
+No.209
+13824
+3600
+No.120
+16704
+4140
+No.165
+19584
+4C80
+No.210
+13888
+3640
+No.121
+16768
+4180
+No.166
+19648
+4CC0
+No.211
+13952
+3680
+No.122
+16832
+41C0
+No.167
+19712
+4D00
+No.212
+14016
+36C0
+No.123
+16896
+4200
+No.168
+19776
+4D40
+No.213
+14080
+3700
+No.124
+16960
+4240
+No.169
+19840
+4D80
+No.214
+14144
+3740
+No.125
+17024
+4280
+No.1
+
+=== PAGE 391 ===
+Operation data R/W commands
+7  Address/code lists
+391
+Modbus 
+Communication Base 
+address
+Operation 
+data No.
+Dec
+Hex
+20736
+5100
+No.228
+20800
+5140
+No.229
+20864
+5180
+No.230
+20928
+51C0
+No.231
+20992
+5200
+No.232
+21056
+5240
+No.233
+21120
+5280
+No.234
+21184
+52C0
+No.235
+21248
+5300
+No.236
+21312
+5340
+No.237
+21376
+5380
+No.238
+21440
+53C0
+No.239
+21504
+5400
+No.240
+21568
+5440
+No.241
+21632
+5480
+No.242
+21696
+54C0
+No.243
+21760
+5500
+No.244
+21824
+5540
+No.245
+21888
+5580
+No.246
+21952
+55C0
+No.247
+22016
+5600
+No.248
+22080
+5640
+No.249
+22144
+5680
+No.250
+22208
+56C0
+No.251
+22272
+5700
+No.252
+22336
+5740
+No.253
+22400
+5780
+No.254
+22464
+57C0
+No.255
+
+
